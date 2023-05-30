@@ -7,6 +7,7 @@ import com.study.util.Util;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class BoardDAO {
@@ -187,10 +188,22 @@ public class BoardDAO {
 
         System.out.println("sql: "+sql);
         ArrayList<BoardVO> list = new ArrayList<BoardVO>();
+        Map listParameterMap = new HashMap<>();
         try {
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
 
+//            while(true){
+//                listParameterMap.put("boardNo",rs.getInt(1));
+//                listParameterMap.put("boardCategoryNo",2);
+//                listParameterMap.put("boardTitle",rs.getString(3));
+//                listParameterMap.put("boardWriter",rs.getString(4));
+//                listParameterMap.put("boardPassword",rs.getString(5));
+//                listParameterMap.put("BoardContent",rs.getString(6));
+//                listParameterMap.put("BoardWriteDate",rs.getString(7));
+//                listParameterMap.put("BoardUpdateDate",rs.getString(8));
+//                listParameterMap.put("BoardCategoryName",rs.getString());
+//            }
 //            pstmt.setInt(1, cate);
 //            pstmt.setString(2, startDate);
 //            pstmt.setString(3, endDate);
@@ -207,9 +220,8 @@ public class BoardDAO {
                 boardVO.setBoardWriter(rs.getString(4));
                 boardVO.setBoardPassword(rs.getString(5));
                 boardVO.setBoardContent(rs.getString(6));
-                boardVO.setBoardNo(rs.getInt(7));
-                boardVO.setBoardWriteDate(rs.getString(8));
-                boardVO.setBoardUpdateDate(rs.getString(9));
+                boardVO.setBoardWriteDate(rs.getString(7));
+                boardVO.setBoardUpdateDate(rs.getString(8));
                 boardVO.setBoardCategoryName(readCategoryName(boardVO.getBoardCategoryNo()));
                 list.add(boardVO);
             }

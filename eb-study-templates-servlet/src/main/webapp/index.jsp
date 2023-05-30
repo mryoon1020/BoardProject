@@ -12,7 +12,7 @@
 <%--<a href="hello-servlet">Hello Servlet</a>--%>
 
 <script>
-    location.href = 'main.jsp';
+    location.href = 'main';
 </script>
 
 <%--
