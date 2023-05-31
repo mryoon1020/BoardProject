@@ -9,56 +9,8 @@
 <h1><%= "Hello World!" %>
 </h1>
 <br/>
-<%--<a href="hello-servlet">Hello Servlet</a>--%>
 
-<script>
-    location.href = 'main';
-</script>
-
-<%--
-
-    ConnectionTest t = new ConnectionTest();
-    out.println(t.getConnection());
-
---%>
-
-<a href="main.jsp">이동</a>
-
-<div id="topbox">
-
-    <table>
-
-        <tr></tr>
-
-    </table>
-
-</div>
-
-<div>
-
-    <table>
-
-        <tr>
-            <th>카테고리</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>조회수</th>
-            <th>등록일시</th>
-            <th>수정일시</th>
-        </tr>
-        <tr>
-            <td>JAVA</td>
-            <td>제목입니다.</td>
-            <td>홍길동</td>
-            <td>12</td>
-            <td>2022.04.08</td>
-            <td>2024.12.31</td>
-        </tr>
-    </table>
-
-</div>
-
-<a href="./eb-study-templates-1week/bbsRead.jsp">aaaaaa</a>
+<a href="/board/main">이동</a>
 
 </body>
 </html>

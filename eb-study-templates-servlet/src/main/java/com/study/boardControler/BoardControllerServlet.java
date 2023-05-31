@@ -1,5 +1,6 @@
 package com.study.boardControler;
 
+import com.study.boardService.BoardService;
 import com.study.boardService.BoardServiceList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,31 +12,32 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet("/")
+@WebServlet(value = "/board/*")
 public class BoardControllerServlet extends HttpServlet {
-    Map commandMap = new HashMap();
+    Map<String, BoardService> commandMap = new HashMap<>();
+
     public void init(){
-
-        commandMap.put("boardList", new BoardServiceList() );
-//        commandMap.put("getCategoryList", new GetCategoryList() );
-//        commandMap.put("write", new WriteService() );
-//        commandMap.put("read", new ReaedService() );
+        System.out.println("init running");
+        commandMap.put("boardList", new BoardServiceList());
+        // commandMap.put("getCategoryList", new GetCategoryList());
+        // commandMap.put("write", new WriteService());
+        // commandMap.put("read", new ReaedService());
     }
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String uri = request.getRequestURI();
-        if("/".equals(uri)||"/main".equals(uri)){
-            commandMap.get("boardList");
+        System.out.println(uri);
+        if ("/board/main".equals(uri)) {
+            BoardService boardService = commandMap.get("boardList");
+            String result = boardService.runService(request, response);
+            request.getRequestDispatcher(result).forward(request, response);
         }
-
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doPost(request, response);
     }
 
-
-
-
+    public void destroy() {
+    }
 }
