@@ -1,5 +1,9 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.study.board.BoardVO" %>
+<%@ page import="com.study.board.BoardDAO" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="com.study.board.BoardCategoryVO" %>
 <html>
 <head>
     <title>Title</title>
@@ -18,7 +22,7 @@
         <select name="cate" id="boardCategory">
           <%
             BoardDAO boardDAO = new BoardDAO();
-            ArrayList<BoardCategory> categoryList = boardDAO.getCategoryList();
+            ArrayList<BoardCategoryVO> categoryList = boardDAO.getCategoryList();
 
             for(int i =0; i<categoryList.size(); i++){
           %>
@@ -59,9 +63,7 @@
         </td>
         <td><%= boardList.get(i).getBoardWriter()%></td>
         <td>0</td>
-        <td><%= boardList.get(i).getBoardWriteDate().substring(0,11)+
-                boardList.get(i).getBoardWriteDate().substring(11,13)+"시"+" "+
-                boardList.get(i).getBoardWriteDate().substring(14,16)+"분" %></td>
+        <td><%= boardList.get(i).getBoardWriteDate() %></td>
         <%
           if(boardList.get(i).getBoardUpdateDate()==null){
         %>
@@ -92,17 +94,13 @@
       int lastPage = boardDAO.boardGetLastPage();
       for(int i = 1; i<=lastPage; i++){
     %>
-    <a href='main.jsp?currentPage=<%=i%>'><%=i%></a>
+    <a href='/board/main?currentPage=<%=i%>'><%=i%></a>
     <%
       }
     %>
   </div>
 </div>
-<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="../../js/bootstrap.js"></script>
 
-<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="../../js/bootstrap.js"></script>
-
+<h1>main.jsp</h1>
 </body>
 </html>

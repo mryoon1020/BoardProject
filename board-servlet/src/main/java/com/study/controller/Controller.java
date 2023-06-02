@@ -29,9 +29,9 @@ public class Controller extends HttpServlet {
         System.out.println(uri);
         if ("/board/main".equals(uri)) {
             BoardService boardService = commandMap.get("boardList");
-            boardService.runService(request, response);
+           String result = boardService.runService(request, response);
 //            System.out.println(result);
-//            request.getRequestDispatcher(result).forward(request, response);
+            request.getRequestDispatcher(result).forward(request, response);
         }
     }
 
@@ -39,6 +39,4 @@ public class Controller extends HttpServlet {
         super.doPost(request, response);
     }
 
-    public void destroy() {
-    }
 }

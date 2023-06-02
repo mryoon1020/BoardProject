@@ -12,7 +12,6 @@ import java.util.Map;
 public class BoardServiceList implements BoardService{
     @Override
     public String runService(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("List서비스가 호출되었습니다");
         BoardDAO boardDAO = new BoardDAO();
 
         /**
@@ -69,6 +68,6 @@ public class BoardServiceList implements BoardService{
         ArrayList<BoardVO> boardList = boardDAO.boardList(map);
         request.setAttribute("boardList", boardList);
 
-        return "/views/main.jsp";
+        return "/WEB-INF/views/main.jsp";
     }
 }

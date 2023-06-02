@@ -110,21 +110,17 @@ public class BoardDAO {
      */
     public ArrayList<BoardVO> boardList(Map map){
 
-        System.out.println("ListDAO 객체가 생성되었습니다");
-
         Connection conn = DbOpen.getConnection();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         String sql = "SELECT * FROM board";
+        int viewPost = 10;
 
         int pageIndex = (int) map.get("pageIndex");
         int cate = (int) map.get("cate");
         String startDate = (String) map.get("startDate");
         String endDate = (String) map.get("endDate");
         String keyWord = (String) map.get("keyWord");
-        System.out.println("startDate : "+startDate);
-        System.out.println("endDate : "+endDate);
-        System.out.println("keyWord : "+keyWord);
 
         if(keyWord!=null) {
             sql += " WHERE board_title LIKE '%" + keyWord + "%'"
@@ -185,33 +181,13 @@ public class BoardDAO {
                 }
             }
         }
-        sql += " ORDER BY board_No DESC LIMIT "+ pageIndex + ", 10";
+        sql += " ORDER BY board_No DESC LIMIT "+ pageIndex + ", " + viewPost;
 
-        System.out.println("sql: "+sql);
         ArrayList<BoardVO> list = new ArrayList<BoardVO>();
         Map listParameterMap = new HashMap<>();
         try {
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
-
-//            while(true){
-//                listParameterMap.put("boardNo",rs.getInt(1));
-//                listParameterMap.put("boardCategoryNo",2);
-//                listParameterMap.put("boardTitle",rs.getString(3));
-//                listParameterMap.put("boardWriter",rs.getString(4));
-//                listParameterMap.put("boardPassword",rs.getString(5));
-//                listParameterMap.put("BoardContent",rs.getString(6));
-//                listParameterMap.put("BoardWriteDate",rs.getString(7));
-//                listParameterMap.put("BoardUpdateDate",rs.getString(8));
-//                listParameterMap.put("BoardCategoryName",rs.getString());
-//            }
-//            pstmt.setInt(1, cate);
-//            pstmt.setString(2, startDate);
-//            pstmt.setString(3, endDate);
-//            pstmt.setString(4, startDate);
-//            pstmt.setString(5, endDate);
-//            pstmt.setString(6, keyWord);
-//            pstmt.setInt(7, pageIndex);
 
             while(rs.next()) {
                 BoardVO boardVO = new BoardVO();
