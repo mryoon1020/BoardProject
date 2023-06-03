@@ -230,6 +230,8 @@ public class BoardDAO {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            DbClose.close(rs, pstmt, conn);
         }
         return -1; //조회실패했을 때
     }
@@ -244,30 +246,39 @@ public class BoardDAO {
 
     }
 
-//    public BoardDTO bbsRead(int bbsNo) {
-//        String SQL = "select * from bbs where bbsNo = ?";
-//        try {
-//            PreparedStatement pstmt = conn.prepareStatement(SQL);
-//            pstmt.setInt(1, bbsNo);
-//            rs = pstmt.executeQuery();
-//            if(rs.next()) {
-//                BoardDTO bbs = new BoardDTO();
-//                bbs.setBbsNo(rs.getInt(1));
-//                bbs.setCategory(rs.getString(2));
-//                bbs.setBbsTitle(rs.getString(3));
-//                bbs.setBbsWriter(rs.getString(4));
-//                bbs.setBbsPassword(rs.getString(5));
-//                bbs.setBbsContent(rs.getString(6));
-//                bbs.setBbsWDate(rs.getString(8));
-//                bbs.setBbsFile(rs.getString(10));
-//                return bbs;
-//            }
-//
-//        }catch(Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+    /**
+     * 게시글 번호를 parameter로 전달받아 쿼리를 실행 합니다.
+     * @param boardNo 게시글 번호
+     * @return
+     */
+    public BoardVO BoardRead(int boardNo) {
+        Connection conn = DbOpen.getConnection();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT * FROM board WHERE board_no = ?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1,boardNo);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                BoardVO boardVO = new BoardVO();
+                boardVO.setBoardNo(rs.getInt(1));
+                boardVO.setBoardCategoryName(readCategoryName(boardVO.getBoardCategoryNo()));
+                boardVO.setBoardTitle(rs.getString(3));
+                boardVO.setBoardWriter(rs.getString(4));
+                boardVO.setBoardPassword(rs.getString(5));
+                boardVO.setBoardContent(rs.getString(6));
+                boardVO.setBoardWriteDate(rs.getString(7));
+                return boardVO;
+            }
+
+        }catch(Exception e) {
+            e.printStackTrace();
+        }finally {
+            DbClose.close(rs, pstmt, conn);
+        }
+        return null;
+    }
 //
 //    public int update(int bbsNo, String bbsWriter, String bbsPassword, String bbsTitle, String bbsContent, String bbsFile) {
 //        String SQL = "update bbs set bbsWriter=?,  bbsTitle =?, bbsContent =?, bbsUDate=?, bbsFile = ? where bbsNo =?";

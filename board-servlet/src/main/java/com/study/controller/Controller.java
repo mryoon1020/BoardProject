@@ -1,7 +1,6 @@
 package com.study.controller;
 
-import com.study.service.BoardService;
-import com.study.service.BoardServiceList;
+import com.study.service.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,26 +16,53 @@ public class Controller extends HttpServlet {
     Map<String, BoardService> commandMap = new HashMap<>();
 
     public void init(){
-        System.out.println("init running");
+
         commandMap.put("boardList", new BoardServiceList());
-        // commandMap.put("getCategoryList", new GetCategoryList());
-        // commandMap.put("write", new WriteService());
-        // commandMap.put("read", new ReaedService());
+        commandMap.put("boardWriteAction", new BoardServiceWriteAction());
+        commandMap.put("boardRead", new BoardServiceRead());
+        commandMap.put("boardUpdate", new BoardServiceRead());
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String uri = request.getRequestURI();
-        System.out.println(uri);
+
         if ("/board/main".equals(uri)) {
+
             BoardService boardService = commandMap.get("boardList");
-           String result = boardService.runService(request, response);
-//            System.out.println(result);
+            String result = boardService.runService(request, response);
             request.getRequestDispatcher(result).forward(request, response);
+
+        } else if ("/board/read".equals(uri)) {
+
+            BoardService boardService = commandMap.get("boardRead");
+            String result = boardService.runService(request,response);
+            request.getRequestDispatcher(result).forward(request, response);
+
+        } else if ("/board/update".equals(uri)) {
+
+        } else if ("/board/write".equals(uri)) {
+
+            request.getRequestDispatcher("/WEB-INF/views/write.jsp").forward(request, response);
+
+
         }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         super.doPost(request, response);
+
+        String uri = request.getRequestURI();
+
+        if("/board/writeAction".equals(uri)){
+
+            BoardService boardService = commandMap.get("boardWriteAction");
+            String result = boardService.runService(request,response);
+//            request.getRequestDispatcher(result).forward(request, response);
+            response.sendRedirect(result);
+
+        }
+
     }
 
 }

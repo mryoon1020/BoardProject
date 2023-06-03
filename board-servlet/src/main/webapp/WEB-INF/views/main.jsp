@@ -58,7 +58,7 @@
       %>
       <tr>
         <td><%= boardList.get(i).getBoardCategoryName()%></td>
-        <td><a href="read.jsp?boardNo=<%= boardList.get(i).getBoardNo()%>">
+        <td><a href="/board/read?boardNo=<%= boardList.get(i).getBoardNo()%>">
           <%= boardList.get(i).getBoardTitle().replaceAll(" ","&nbsp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\n","<br>") %></a>
         </td>
         <td><%= boardList.get(i).getBoardWriter()%></td>
@@ -84,7 +84,7 @@
       %>
       </tbody>
     </table>
-    <a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
+    <a href="/board/write" class="btn btn-primary pull-right">글쓰기</a>
   </div>
   <div style="width:1000px; text-align: center; margin-top: 10px;">
     <%
