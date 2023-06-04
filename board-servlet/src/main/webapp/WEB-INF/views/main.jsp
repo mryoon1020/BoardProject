@@ -4,6 +4,7 @@
 <%@ page import="com.study.board.BoardDAO" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.study.board.BoardCategoryVO" %>
+<%@ page import="java.util.List" %>
 <html>
 <head>
     <title>Title</title>
@@ -22,7 +23,7 @@
         <select name="cate" id="boardCategory">
           <%
             BoardDAO boardDAO = new BoardDAO();
-            ArrayList<BoardCategoryVO> categoryList = boardDAO.getCategoryList();
+            List<BoardCategoryVO> categoryList = boardDAO.getCategoryList();
 
             for(int i =0; i<categoryList.size(); i++){
           %>
@@ -58,11 +59,10 @@
       %>
       <tr>
         <td><%= boardList.get(i).getBoardCategoryName()%></td>
-        <td><a href="/board/read?boardNo=<%= boardList.get(i).getBoardNo()%>">
+        <td><a href="/board?action=read&boardNo=<%= boardList.get(i).getBoardNo()%>">
           <%= boardList.get(i).getBoardTitle().replaceAll(" ","&nbsp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\n","<br>") %></a>
         </td>
         <td><%= boardList.get(i).getBoardWriter()%></td>
-        <td>0</td>
         <td><%= boardList.get(i).getBoardWriteDate() %></td>
         <%
           if(boardList.get(i).getBoardUpdateDate()==null){
@@ -84,7 +84,7 @@
       %>
       </tbody>
     </table>
-    <a href="/board/write" class="btn btn-primary pull-right">글쓰기</a>
+    <a href="/board?action=write" class="btn btn-primary pull-right">글쓰기</a>
   </div>
   <div style="width:1000px; text-align: center; margin-top: 10px;">
     <%

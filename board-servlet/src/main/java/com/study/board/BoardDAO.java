@@ -2,46 +2,35 @@ package com.study.board;
 
 import com.study.DBConnection.DbClose;
 import com.study.DBConnection.DbOpen;
+import com.study.config.SqlMapConfig;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BoardDAO {
+
+     private static SqlSessionFactory sessionFactory;
+    static {
+        sessionFactory = SqlMapConfig.getSqlMapInstance();
+    }
 
     /**
      * 카테고리 목록조회
      * @return
      */
-    public ArrayList<BoardCategoryVO> getCategoryList(){
+    public List<BoardCategoryVO> getCategoryList(){
 
-        Connection conn = DbOpen.getConnection();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        String sql = "SELECT * FROM board_category";
-
-        ArrayList<BoardCategoryVO> list = new ArrayList<>();
-        try {
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-
-            while(rs.next()){
-                BoardCategoryVO boardCategory = new BoardCategoryVO();
-                boardCategory.setBoardCategoryNo(rs.getInt(1));
-                boardCategory.setBoardCategoryName(rs.getString(2));
-                list.add(boardCategory);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            DbClose.close(rs, pstmt,conn);
-        }
-
-        return list;
+//        SqlSessionFactory sessionFactory = SqlMapConfig.getSqlMapInstance();
+        SqlSession sqlSession = sessionFactory.openSession();//커넥션가지고 있는 세션열기
+        return sqlSession.selectList("selectCategoryList");//단건조회
     }
 
     /**
@@ -199,7 +188,7 @@ public class BoardDAO {
                 boardVO.setBoardContent(rs.getString(6));
                 boardVO.setBoardWriteDate(rs.getString(7));
                 boardVO.setBoardUpdateDate(rs.getString(8));
-                boardVO.setBoardCategoryName(readCategoryName(boardVO.getBoardCategoryNo()));
+                boardVO.setBoardCategoryName(readCategoryName(rs.getInt(2)));
                 list.add(boardVO);
             }
 
@@ -247,9 +236,12 @@ public class BoardDAO {
     }
 
     /**
-     * 게시글 번호를 parameter로 전달받아 쿼리를 실행 합니다.
+     *
+     * 게시글 번호를 parameter로 전달받아 쿼리를 실행
+     * boardView(boardVO) : 조회수 증가 메서드
+     * @TODO 조회수가 2씩 증가하는 문제가 있음
      * @param boardNo 게시글 번호
-     * @return
+     *
      */
     public BoardVO BoardRead(int boardNo) {
         Connection conn = DbOpen.getConnection();
@@ -263,12 +255,15 @@ public class BoardDAO {
             if(rs.next()) {
                 BoardVO boardVO = new BoardVO();
                 boardVO.setBoardNo(rs.getInt(1));
-                boardVO.setBoardCategoryName(readCategoryName(boardVO.getBoardCategoryNo()));
+                boardVO.setBoardCategoryName(readCategoryName(rs.getInt(2)));
                 boardVO.setBoardTitle(rs.getString(3));
                 boardVO.setBoardWriter(rs.getString(4));
                 boardVO.setBoardPassword(rs.getString(5));
                 boardVO.setBoardContent(rs.getString(6));
-                boardVO.setBoardWriteDate(rs.getString(7));
+                boardVO.setBoardWriteDate(rs.getString(8));
+                boardVO.setBoardUpdateDate(rs.getString(9));
+                boardVO.setBoardView(rs.getInt(7));
+                boardView(boardVO);
                 return boardVO;
             }
 
@@ -279,58 +274,108 @@ public class BoardDAO {
         }
         return null;
     }
-//
-//    public int update(int bbsNo, String bbsWriter, String bbsPassword, String bbsTitle, String bbsContent, String bbsFile) {
-//        String SQL = "update bbs set bbsWriter=?,  bbsTitle =?, bbsContent =?, bbsUDate=?, bbsFile = ? where bbsNo =?";
-//        try {
-//            PreparedStatement pstmt = conn.prepareStatement(SQL);
-//            pstmt.setString(1, bbsWriter);
-//            pstmt.setString(2, bbsTitle);
-//            pstmt.setString(3, bbsContent);
-//            pstmt.setString(4, getDate());
-//            pstmt.setString(5, bbsFile);
-//            pstmt.setInt(6, bbsNo);
-//
-//            System.out.println("bbsNo :"+bbsNo);
-//            System.out.println("bbsWriter :"+bbsWriter);
-//            System.out.println("bbsTitle :"+bbsTitle);
-//            System.out.println("bbsContent :"+bbsContent);
-//            System.out.println("bbsUDate :"+getDate());
-//            return pstmt.executeUpdate();
-//        }catch(Exception e) {
-//            e.printStackTrace();
-//        }
-//        return -1; //데이터베이스 오류
-//    }
-//
-//    public int delete(int bbsNo) {
-//        String SQL = "delete  from bbs where bbsNo =?";
-//        System.out.println("delete 함수쪽: "+bbsNo);
-//        try {
-//            PreparedStatement pstmt = conn.prepareStatement(SQL);
-//            pstmt.setInt(1, bbsNo);
-//            return pstmt.executeUpdate();
-//        }catch(Exception e) {
-//            e.printStackTrace();
-//        }
-//        return -1; //데이터베이스 오류
-//    }
-//
-//    public BoardDTO checkPassword(int bbsNo) {
-//        String SQL = "select bbsPassword from bbs where bbsNo=?";
-//        try {
-//            PreparedStatement pstmt = conn.prepareStatement(SQL);
-//            pstmt.setInt(1, bbsNo);
-//            rs = pstmt.executeQuery();
-//            if (rs.next()) {
-//                BoardDTO bbs = new BoardDTO();
-//                bbs.setBbsPassword(rs.getString(1));
-//                return bbs;
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+
+    /**
+     * 게시글 수정 메서드
+     * update.jsp로 부터 controller를 거쳐 파라미터를 전달받아 쿼리실행
+     * @param boardVO update.jsp로 부터 전달받은 파라미터
+     */
+    public int update(BoardVO boardVO) {
+
+        Connection conn = DbOpen.getConnection();
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE board SET board_writer=?,  board_title =?, board_content =?, board_update_date=NOW() WHERE board_no =?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, boardVO.getBoardWriter());
+            pstmt.setString(2, boardVO.getBoardTitle());
+            pstmt.setString(3, boardVO.getBoardContent());
+            pstmt.setInt(4, boardVO.getBoardNo());
+
+            return pstmt.executeUpdate();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }finally {
+            DbClose.close(pstmt, conn);
+        }
+
+        return -1; //데이터베이스 오류
+    }
+
+    /**
+     * 게시글 삭제 메서드
+     * @param boardNo 게시글번호
+     * @return
+     */
+    public int boardDelete(int boardNo) {
+        Connection conn = DbOpen.getConnection();
+        PreparedStatement pstmt = null;
+        String sql = "DELETE  FROM board WHERE board_no =?";
+
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, boardNo);
+            return pstmt.executeUpdate();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }finally {
+            DbClose.close(pstmt, conn);
+        }
+        return -1; //데이터베이스 오류
+    }
+
+    /**
+     * 비밀번호 검증 메서드
+     * @param boardNo : 게시글번호
+     * @return
+     */
+    public BoardVO checkPassword(int boardNo) {
+        Connection conn = DbOpen.getConnection();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT board_password FROM board WHERE board_no=?";
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, boardNo);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                BoardVO boardVO = new BoardVO();
+                boardVO.setBoardPassword(rs.getString(1));
+                return boardVO;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            DbClose.close(rs, pstmt, conn);
+        }
+        return null;
+    }
+
+    /**
+     * 조회수 증가 기능 메서드, boardRead()와 연동
+     * @param boardVO : boardRead()를 통해서 조회된 VO
+     *                  board_no, 기존 board_view를 가져올때 사용
+     */
+
+    public int boardView(BoardVO boardVO){
+        Connection conn = DbOpen.getConnection();
+        PreparedStatement pstmt = null;
+        String sql = "UPDATE board SET board_view=? WHERE board_no =?";
+
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1,boardVO.getBoardView()+1);
+            pstmt.setInt(2, boardVO.getBoardNo());
+
+            return pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            DbClose.close(pstmt, conn);
+        }
+        return -1;
+    }
 }
