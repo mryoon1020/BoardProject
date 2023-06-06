@@ -5,4 +5,8 @@
     <select id="selectCategoryList" resultType="com.study.board.BoardCategoryVO">
         SELECT * FROM board_category
     </select>
+    <insert id="writeReply" parameterType="map">
+        INSERT INTO board_reply (board_no, board_reply_content, board_reply_date)
+        VALUES (#{boardNo}, #{boardReply}, NOW())
+    </insert>
 </mapper>

@@ -51,18 +51,37 @@
 	<script>
 
 	function writeReply() {
-		let value = document.getElementById("boardReply").value
+		const value = document.getElementById("boardReply").value
+		const form = document.getElementById("replyForm")
 
 		if(!value){
 			alert("내용을 입력해주세요")
 		}else{
-			fetch("/reply",{
+			document.getElementById("replyForm").submit();
+			form.addEventListener('submit',(e) =>{
+				e.preventDefault()
+			});
 
-			}).then()
-			document.getElementById("replyForm").onsub
+			const dataSend = new FormData(form);
+
+			fetch("/board?action=replyWrite&boardNo=<%= request.getParameter("boardNo")%>",{
+				method: 'POST',
+				body:	dataSend,
+			}).then(response => {console.log(response)})
+
 		}
 	}
 
+	function reply(){
+		let replyList;
+
+		fetch("/board?action=replyList&boardNo=<%= request.getParameter("boardNo")%>",{
+			method:'GET',
+		}).then(response => {
+			response.json();
+		})
+
+	}
 
 	function modalOpen(){
 			document.getElementById("modal").style.display="block";
@@ -104,8 +123,8 @@
 		<div>댓글쓰기</div>
 		<form action="" method="post" id="replyForm">
 			<div>
-				<input type="text" id="boardReply" placeholder="댓글을 입력해주세요">
-				<button onclick="writeReply()"></button>
+				<input type="text" name="boardReply" id="boardReply" placeholder="댓글을 입력해주세요">
+				<button onclick="writeReply()">등록</button>
 			</div>
 		</form>
 	</div>

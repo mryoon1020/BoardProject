@@ -378,4 +378,16 @@ public class BoardDAO {
         }
         return -1;
     }
+
+    /***
+     * 게시판 댓글등록 기능 메서드
+     */
+
+    public void boardReplyWrite(Map map){
+
+        SqlSession sqlSession = sessionFactory.openSession();
+        sqlSession.insert("writeReply", map);
+
+    }
+
 }
