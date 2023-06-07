@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BoardReplyWriteService implements BoardService{
+public class BoardServiceReplyWriteAction implements BoardService{
     @Override
     public void runService(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        System.out.println();
+        System.out.println("reply write 실행");
         BoardDAO boardDAO = new BoardDAO();
         Map map = new HashMap();
 
@@ -23,8 +23,10 @@ public class BoardReplyWriteService implements BoardService{
 
         boardDAO.boardReplyWrite(map);
 
-        response.sendRedirect("/board?action=read&boardNo="+boardNo);
+        System.out.println("map boardNo"+boardNo);
+        System.out.println("map boardReply"+boardReply);
 
+        response.sendRedirect("/board?action=read&boardNo="+boardNo);
 
     }
 }

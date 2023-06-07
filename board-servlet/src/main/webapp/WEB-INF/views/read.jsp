@@ -2,8 +2,9 @@
     pageEncoding="UTF-8"%>
 <% request.setCharacterEncoding("UTF-8"); %>
 <%@ page import="com.study.board.BoardDAO" %>
-<%@ page import="java.io.PrintWriter" %>
 <%@ page import="com.study.board.BoardVO" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.study.board.BoardReplyVO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,38 +51,70 @@
 	</style>
 	<script>
 
-	function writeReply() {
-		const value = document.getElementById("boardReply").value
-		const form = document.getElementById("replyForm")
-
-		if(!value){
-			alert("내용을 입력해주세요")
-		}else{
-			document.getElementById("replyForm").submit();
-			form.addEventListener('submit',(e) =>{
-				e.preventDefault()
-			});
-
-			const dataSend = new FormData(form);
-
-			fetch("/board?action=replyWrite&boardNo=<%= request.getParameter("boardNo")%>",{
-				method: 'POST',
-				body:	dataSend,
-			}).then(response => {console.log(response)})
-
+		function writeReply() {
+			const value = document.getElementById("boardReply").value
+			if (!value) {
+				alert("내용을 입력해주세요")
+			} else {
+				document.getElementById("replyForm").submit();
+			}
 		}
-	}
 
-	function reply(){
-		let replyList;
 
-		fetch("/board?action=replyList&boardNo=<%= request.getParameter("boardNo")%>",{
-			method:'GET',
-		}).then(response => {
-			response.json();
-		})
+	<%--function writeReply() {--%>
+	<%--	const value = document.getElementById("boardReply").value--%>
+	<%--	const form = document.getElementById("replyForm")--%>
 
-	}
+	<%--	if(!value){--%>
+	<%--		alert("내용을 입력해주세요")--%>
+	<%--	}else{--%>
+	<%--		document.getElementById("replyForm").submit();--%>
+	<%--		form.addEventListener('submit',(e) =>{--%>
+	<%--			e.preventDefault()--%>
+	<%--		});--%>
+
+	<%--		const dataSend = new FormData(form);--%>
+	<%--		const data = new URLSearchParams(dataSend);--%>
+
+	<%--		fetch("/board?action=reply&boardNo=<%= request.getParameter("boardNo")%>",{--%>
+	<%--			method: 'POST',--%>
+	<%--			body:	data,--%>
+	<%--		}).then(response => {--%>
+	<%--			if(response.ok){--%>
+	<%--				reply();--%>
+	<%--			}else{--%>
+
+	<%--			}--%>
+	<%--		})--%>
+	<%--			.then(data => console.log(data))--%>
+	<%--				.catch(error => console.log(error))	;--%>
+
+	<%--	}--%>
+	<%--}--%>
+
+	<%--function reply(){--%>
+	<%--	let replyList;--%>
+
+	<%--	fetch("/board?action=replyList&boardNo=<%= request.getParameter("boardNo")%>",{--%>
+	<%--		method:'GET',--%>
+	<%--	}).then(response => {--%>
+	<%--		response.json();})--%>
+	<%--			.then(data => {--%>
+
+	<%--				console.log(data);--%>
+
+	<%--				// let replyListArea = document.getElementById('replyListArea');--%>
+	<%--				// let replyList = document.createElement('p');--%>
+	<%--				// let makeHr = document.getElementById('hr');--%>
+	<%--				//--%>
+	<%--				// replyList.setAttribute();--%>
+	<%--				// replyList.innerHTML = data.--%>
+	<%--				// replyListArea.setAttribute()--%>
+	<%--			}--%>
+
+	<%--			)--%>
+
+	<%--}--%>
 
 	function modalOpen(){
 			document.getElementById("modal").style.display="block";
@@ -102,26 +135,50 @@
 	BoardVO boardVO = new BoardDAO().BoardRead(boardNo); %>
 <div>
 	<div>
+		<div>작성자</div>
 		<div><%= boardVO.getBoardWriter()%></div>
-		<div><%= boardVO.getBoardWriteDate()%>등록일시</div>
-		<div><%= boardVO.getBoardUpdateDate()%>수정일시</div>
+		<div>등록일시</div>
+		<div><%= boardVO.getBoardWriteDate()%></div>
+		<div>수정일시</div>
+		<div><%= boardVO.getBoardUpdateDate()%></div>
 	</div>
 	<div>
-		<div><%= boardVO.getBoardCategoryName()%>카테고리</div>
-		<div><%= boardVO.getBoardTitle()%>제목</div>
-		<div><%= boardVO.getBoardView()%>조회수</div>
+		<div>카테고리</div>
+		<div><%= boardVO.getBoardCategoryName()%></div>
+		<div>제목</div>
+		<div><%= boardVO.getBoardTitle()%></div>
+		<div>조회수</div>
+		<div><%= boardVO.getBoardView()%></div>
 	</div>
 	<div>
-		<div><%= boardVO.getBoardContent()%>내용</div>
+		<div>내용</div>
+		<div><%= boardVO.getBoardContent()%></div>
 		<div><%-- boardVO.getBoardFile() --%>첨부파일 이미지 + 첨부파일</div>
 	</div>
 
 	<div>
+
+		<%
+			BoardDAO boardDAO = new BoardDAO();
+			List<BoardReplyVO> replyList = boardDAO.boardReplyList(boardVO.getBoardNo());
+
+			for(int i=0; i<replyList.size(); i++){
+		%>
+
+		<p>
+				<%=replyList.get(i).getBoardReplyDate()%><br>
+				<%= replyList.get(i).getBoardReplyContent()%>
+		<hr>
+		</p>
+		<%
+			};
+		%>
+
 	댓글
-		<div>댓글창</div>
+		<div id="replyListArea">댓글창</div>
 		<div>댓글입력</div>
 		<div>댓글쓰기</div>
-		<form action="" method="post" id="replyForm">
+		<form action="/board?action=reply&boardNo=<%= request.getParameter("boardNo")%>" method="post" id="replyForm">
 			<div>
 				<input type="text" name="boardReply" id="boardReply" placeholder="댓글을 입력해주세요">
 				<button onclick="writeReply()">등록</button>

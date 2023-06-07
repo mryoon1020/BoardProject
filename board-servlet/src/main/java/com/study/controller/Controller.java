@@ -32,6 +32,8 @@ public class Controller extends HttpServlet {
         commandMap.put("read", new BoardServiceRead());
         commandMap.put("update", new BoardServiceUpdateAction());
         commandMap.put("delete", new BoardServiceDeleteAction());
+        commandMap.put("reply", new BoardServiceReplyWriteAction());
+        commandMap.put("replyList", new BoardServiceReplyListAction());
 
     }
 

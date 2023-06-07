@@ -18,6 +18,7 @@ public class BoardServiceRead implements BoardService{
         int boardNo = Integer.parseInt(request.getParameter("boardNo"));
 
         boardDAO.BoardRead(boardNo);
+        boardDAO.boardReplyList(boardNo);
 
         request.getRequestDispatcher("/WEB-INF/views/read.jsp").forward(request, response);
     }

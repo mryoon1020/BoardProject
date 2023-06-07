@@ -9,4 +9,9 @@
         INSERT INTO board_reply (board_no, board_reply_content, board_reply_date)
         VALUES (#{boardNo}, #{boardReply}, NOW())
     </insert>
+    <select id="selectReplyList" parameterType="int" resultType="com.study.board.BoardReplyVO">
+        SELECT * FROM board_reply
+        WHERE board_no = #{boardNo}
+        ORDER BY board_reply_no DESC LIMIT 5;
+    </select>
 </mapper>

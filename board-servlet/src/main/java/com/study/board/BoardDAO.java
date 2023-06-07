@@ -385,9 +385,21 @@ public class BoardDAO {
 
     public void boardReplyWrite(Map map){
 
-        SqlSession sqlSession = sessionFactory.openSession();
+        System.out.println("reply dao 실행");
+        System.out.println("dao map"+ map.get("boardNo"));
+        System.out.println("dao map"+ map.get("boardReply"));
+
+        SqlSession sqlSession = sessionFactory.openSession(true);
         sqlSession.insert("writeReply", map);
 
+    }
+
+    public List<BoardReplyVO> boardReplyList(int boardNo){
+
+        SqlSession sqlSession = sessionFactory.openSession();
+
+
+        return sqlSession.selectList("selectReplyList", boardNo);
     }
 
 }
