@@ -33,7 +33,7 @@
 <form method="post" action="/board?action=update&boardNo=<%=boardNo%>" id="updateForm">
 <div>
 	<div>
-		<input type="hidden" name="boardName" value="<%= boardVO.getBoardNo()%>">
+		<input type="hidden" name="boardNo" value="<%= boardVO.getBoardNo()%>">
 		<div>카테고리</div>
 		<div><%= boardVO.getBoardCategoryName()%></div>
 	</div>

@@ -11,28 +11,42 @@
         SELECT * FROM board
     </select>
 
-    <insert id="writeReply" parameterType="map">
-        INSERT INTO board_reply (board_no, board_reply_content, board_reply_date)
-        VALUES (#{boardNo}, #{boardReply}, NOW())
-    </insert>
-    <select id="replyList" parameterType="int" resultType="com.study.vo.BoardReplyVO">
-        SELECT * FROM board_reply
-        WHERE board_no = #{boardNo}
-        ORDER BY board_reply_no DESC LIMIT 5;
-    </select>
-
     <insert id="write" parameterType="com.study.vo.BoardVO">
         INSERT INTO board(board_category_name, board_title, board_writer, board_password, board_content, board_view, board_write_date)
         VALUES(#{boardCategoryName},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
     </insert>
 
     <update id="view" parameterType="int">
-        UPDATE board SET board_view=#{boardView}+1 WHERE board_no =#{boardNo}
+        UPDATE board SET board_view=#{boardView} WHERE board_no =#{boardNo}
     </update>
 
-    <select id="read" resultType="com.study.vo.BoardCategoryVO">
+    <select id="read" resultType="com.study.vo.BoardVO">
         SELECT * FROM board WHERE board_no = #{boardNo}
     </select>
 
+    <update id="update" parameterType="com.study.vo.BoardVO">
+        UPDATE board
+        SET board_writer= #{boardWriter},  board_title = #{boardTitle}, board_content = #{boardContent}, board_update_date=NOW() WHERE board_no = #{boardNo}
+    </update>
 
+    <select id="checkPassword" resultType="com.study.vo.BoardVO">
+        SELECT board_password
+        FROM board
+        WHERE board_no=#{boardNo}
+    </select>
+
+    <delete id="delete" parameterType="int">
+        DELETE  FROM board WHERE board_no = #{boardNo}
+    </delete>
+
+    <insert id="replyWrite" parameterType="com.study.vo.BoardReplyVO">
+        INSERT INTO board_reply (board_no, board_reply_content, board_reply_date)
+        VALUES (#{boardNo}, #{boardReplyContent}, NOW())
+    </insert>
+
+    <select id="replyList" parameterType="int" resultType="com.study.vo.BoardReplyVO">
+        SELECT * FROM board_reply
+        WHERE board_no = #{boardNo}
+        ORDER BY board_reply_no DESC LIMIT 5;
+    </select>
 </mapper>
