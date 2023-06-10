@@ -40,7 +40,11 @@ public class DatabaseConfig {
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception{
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
-        sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources("classpath:/mybatis/*.xml"));
+        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardCategoryVO");
+        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardVO");
+        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardReplyVO");
+        sqlSessionFactoryBean.setConfigLocation(applicationContext.getResource("classpath:/mybatis/mybatisConfig.xml"));
+        sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources("classpath:/mybatis/board.xml"));
         return sqlSessionFactoryBean.getObject();
     }
 

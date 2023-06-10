@@ -20,6 +20,7 @@ import lombok.Data;
 public class BoardVO {
     private int boardNo;
     private  int boardCategoryNo;
+    private String boardCategoryName;
     private String boardTitle;
     private String boardWriter;
     private String boardPassword;
@@ -27,6 +28,4 @@ public class BoardVO {
     private int boardView;
     private String boardWriteDate;
     private String boardUpdateDate;
-    private String boardCategoryName;
-
 }

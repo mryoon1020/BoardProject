@@ -21,4 +21,18 @@
         ORDER BY board_reply_no DESC LIMIT 5;
     </select>
 
+    <insert id="write" parameterType="com.study.vo.BoardVO">
+        INSERT INTO board(board_category_name, board_title, board_writer, board_password, board_content, board_view, board_write_date)
+        VALUES(#{boardCategoryName},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
+    </insert>
+
+    <update id="view" parameterType="int">
+        UPDATE board SET board_view=#{boardView}+1 WHERE board_no =#{boardNo}
+    </update>
+
+    <select id="read" resultType="com.study.vo.BoardCategoryVO">
+        SELECT * FROM board WHERE board_no = #{boardNo}
+    </select>
+
+
 </mapper>
