@@ -7,8 +7,9 @@
         SELECT * FROM board_category
     </select>
 
-    <select id="list" resultType="com.study.vo.BoardVO">
+    <select id="list" parameterType="int" resultType="com.study.vo.BoardVO">
         SELECT * FROM board
+        ORDER BY board_No DESC LIMIT  #{pageIndex} , #{viewPost}
     </select>
 
     <insert id="write" parameterType="com.study.vo.BoardVO">
@@ -47,6 +48,10 @@
     <select id="replyList" parameterType="int" resultType="com.study.vo.BoardReplyVO">
         SELECT * FROM board_reply
         WHERE board_no = #{boardNo}
-        ORDER BY board_reply_no DESC LIMIT 5;
+        ORDER BY board_reply_no DESC LIMIT 5
+    </select>
+
+    <select id="totalPost" resultType="int">
+        SELECT count(*) FROM board
     </select>
 </mapper>
