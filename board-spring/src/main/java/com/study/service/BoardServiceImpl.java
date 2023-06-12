@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+
 @Service("com.study.service.BoardServiceImpl")
 public class BoardServiceImpl implements BoardService{
 
@@ -18,8 +20,8 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public List<BoardVO> list(int pageIndex, int viewPost) {
-        return mapper.list(pageIndex, viewPost);
+    public List<BoardVO> list(Map map) {
+        return mapper.list(map);
     }
 
     @Override
@@ -27,8 +29,8 @@ public class BoardServiceImpl implements BoardService{
         return mapper.read(boardNo);
     }
     @Override
-    public void view(int boardView, int boardNo) {
-        mapper.view(boardView,boardNo);
+    public void viewUp(int boardView, int boardNo) {
+        mapper.viewUp(boardView,boardNo);
     }
     @Override
     public void write(BoardVO boardVO) {

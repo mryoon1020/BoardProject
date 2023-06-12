@@ -18,14 +18,14 @@
 <h1>main.jsp</h1>
 <div class="container">
   <div class="row">
-    <form method="post" action="main.jsp">
+    <form method="post" action="/list">
       <div>
         <div>등록일</div>
         <input type="date" name="startDate"> ~
         <input type="date" name="endDate">
       </div>
       <div>
-        <select name="cate" id="boardCategory">
+        <select name="boardCategory" id="boardCategory">
             <c:forEach var="cateList" items="${cateList}">
                 <option value="${cateList.boardCategoryNo}">${cateList.boardCategoryName}</option>
             </c:forEach>

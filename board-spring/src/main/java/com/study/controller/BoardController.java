@@ -1,10 +1,8 @@
 package com.study.controller;
 
 import com.study.service.BoardServiceImpl;
-import com.study.vo.BoardCategoryVO;
 import com.study.vo.BoardReplyVO;
 import com.study.vo.BoardVO;
-import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -13,10 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.study.util.MyUtility.checkNullToEmptyString;
 
 /**
  * BoardService 관련 컨트롤러
@@ -40,14 +39,6 @@ public class BoardController {
     }
 
     /**
-     * category list를 조회 메서드
-     * @param request
-     */
-    public void cateList(HttpServletRequest request){
-        request.setAttribute("cateList",  service.categoryList());
-    }
-
-    /**
      * list page 호출 메서드
      * currentPage : 현재페이지
      * iCurrentPage : 연산을 위해 int로 형변환한 currentPage
@@ -65,10 +56,12 @@ public class BoardController {
         int iCurrentPage = 0;
         int pageIndex = 0;
         int viewPost = 10;
-        int totalPost = boardGetTotalPost();
+        int totalPost = service.totalPost();
         int lastPage = 0;
 
-        if( currentPage == null){//페이징 없는 list는 reference가 없으므로 이렇게 비교해야함, equals() 값을 비교함
+        Map map = new HashMap<>();
+
+        if("".equals(checkNullToEmptyString(currentPage))){
             currentPage="1";
         }else {
             currentPage=request.getParameter("currentPage");
@@ -78,10 +71,17 @@ public class BoardController {
         pageIndex = (iCurrentPage-1)*viewPost;
         lastPage = (int)Math.ceil((double)totalPost/viewPost);
 
-        cateList(request);
-        List<BoardVO> list = service.list(pageIndex, viewPost);
+        map.put("startDate",request.getParameter("startDate"));
+        map.put("endDate",request.getParameter("endDate"));
+        map.put("boardCategory",request.getParameter("boardCategory"));
+        map.put("keyWord",request.getParameter("keyWord"));
+        map.put("pageIndex",pageIndex);
+        map.put("viewPost",viewPost);
+
+        List<BoardVO> list = service.list(map);
 
         request.setAttribute("lastPage", lastPage);
+        request.setAttribute("cateList",  service.categoryList());
         request.setAttribute("list", list);
 
         return "main";
@@ -92,7 +92,7 @@ public class BoardController {
      */
     @GetMapping("/write")
     public String write(HttpServletRequest request){
-        cateList(request);
+        request.setAttribute("cateList",  service.categoryList());
         return "/write";
     }
 
@@ -116,21 +116,12 @@ public class BoardController {
 
         int boardView = 0;
         BoardVO boardVO = service.read(boardNo);
-        boardView = boardVO.getBoardView()+1;
+        boardView = boardVO.getBoardView();
 
-        view(boardNo,boardView);
+        service.viewUp(boardView,boardNo);
         replyList(boardNo, request);
         request.setAttribute("boardVO",boardVO);
         return "/read";
-    }
-
-    /**
-     * 조회수 증가 메서드
-     * @param boardNo 게시글 번호
-     * @param boardView 게시글 조회수
-     */
-    public void view(int boardNo, int boardView){
-        service.view(boardView,boardNo);
     }
 
     /**
@@ -170,7 +161,7 @@ public class BoardController {
      * @param request POST update()에서 받은 사용자가 입력한 비밀번호를 꺼낼때 사용
      * @return 비밀번호 결과가 일치하면 true, 일치하지 않은면 false를 반환
      */
-    public boolean checkPassword(int boardNo, HttpServletRequest request){
+    private boolean checkPassword(int boardNo, HttpServletRequest request){
         BoardVO boardVO = service.checkPassword(boardNo);
         String enteredPassword = request.getParameter("boardPassword");
 
@@ -219,20 +210,9 @@ public class BoardController {
      */
     @PostMapping("/replyWrite")
     public String replyWrite(BoardReplyVO boardReplyVO, HttpServletRequest request){
-        String referer = request.getHeader("Referer"); // 헤더에서 이전 페이지를 읽는다.
+        String boardNo = request.getParameter("boardNo");
         service.replyWrite(boardReplyVO);
-        return "redirect:"+ referer; // 이전 페이지로 리다이렉트
-    }
-
-    /**
-     * 전체 게시글 조회 메서드
-     * @return
-     */
-    public int boardGetTotalPost(){
-        int totalPost = 0;
-        totalPost = service.totalPost();
-
-        return totalPost;
+        return "redirect:read?boardNo="+boardNo;
     }
 
 }
