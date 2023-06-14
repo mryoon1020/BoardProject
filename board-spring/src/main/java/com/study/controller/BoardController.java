@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.study.util.MyUtility.checkNullToEmptyString;
+import static com.study.util.MyUtility.checkNullChangeToEmptyString;
 
 /**
  * BoardService 관련 컨트롤러
@@ -61,7 +61,7 @@ public class BoardController {
 
         Map map = new HashMap<>();
 
-        if("".equals(checkNullToEmptyString(currentPage))){
+        if("".equals(checkNullChangeToEmptyString(currentPage))){
             currentPage="1";
         }else {
             currentPage=request.getParameter("currentPage");
@@ -71,10 +71,10 @@ public class BoardController {
         pageIndex = (iCurrentPage-1)*viewPost;
         lastPage = (int)Math.ceil((double)totalPost/viewPost);
 
-        map.put("startDate",request.getParameter("startDate"));
-        map.put("endDate",request.getParameter("endDate"));
-        map.put("boardCategory",request.getParameter("boardCategory"));
-        map.put("keyWord",request.getParameter("keyWord"));
+        map.put("startDate", checkNullChangeToEmptyString(request.getParameter("startDate")));
+        map.put("endDate", checkNullChangeToEmptyString(request.getParameter("endDate")));
+        map.put("boardCategory", checkNullChangeToEmptyString(request.getParameter("boardCategory")));
+        map.put("keyWord",checkNullChangeToEmptyString(request.getParameter("keyWord")));
         map.put("pageIndex",pageIndex);
         map.put("viewPost",viewPost);
 

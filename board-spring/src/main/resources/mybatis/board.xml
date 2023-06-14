@@ -7,7 +7,7 @@
         SELECT * FROM board_category
     </select>
 <!--게시글 목록 조회 쿼리, 검색조건과 같이 연동-->
-    <select id="list" parameterType="map" resultType="com.study.vo.BoardVO">
+    <select id="list" parameterType="Map" resultType="com.study.vo.BoardVO">
         SELECT b.board_no,
                b.board_category_no,
                b.board_title,
@@ -18,21 +18,37 @@
                b.board_update_date,
                bc.board_category_name
         FROM board b JOIN board_category bc ON b.board_category_no = bc.board_category_no
+        <where>
+            <choose>
+                <when test = 'keyWord != ""'>
+                     b.board_title  like CONCAT('%',#{keyWord},'%')
+                        OR b.board_writer like CONCAT('%',#{keyWord},'%')
+                        OR b.board_content like CONCAT('%',#{keyWord},'%')
+                </when>
+                <when test='boardCategory != ""'>
+                    AND b.board_category_no = #{boardCategory}
+                </when>
+                <when test='startDate != ""'>
+                    AND b.board_write_date >= #{startDate}
+                </when>
+                <when test='endDate != ""'>
+                    AND b.board_write_date <![CDATA[<=]]> #{endDate}
+                </when>
+                <when test='startDate != "" and endDate != ""'>
+                    AND b.board_write_date BETWEEN #{startDate} AND #{endDate}
+                </when>
+                <otherwise>
 
-        <WHERE>
-            <CHOOSE>
-                <WHEN test = "#{startDate} == null AND #{endDate} AND #{boardCategory} AND #{keyWord}">
-
-                </WHEN>
-            </CHOOSE>
-        </WHERE>
-
-
+                </otherwise>
+            </choose>
+        </where>
         ORDER BY b.board_No DESC LIMIT  #{pageIndex} , #{viewPost}
     </select>
 <!--게시글 작성 쿼리-->
     <insert id="write" parameterType="com.study.vo.BoardVO">
-        INSERT INTO board(board_category_name, board_title, board_writer, board_password, board_content, board_view, board_write_date)
+        INSERT INTO board(board_category_name, board_title, board_writer,
+                          board_password, board_content, board_view,
+                          board_write_date)
         VALUES(#{boardCategoryName},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
     </insert>
 <!--조회수 증가 쿼리-->
@@ -56,7 +72,11 @@
 <!--게시글 수정 쿼리-->
     <update id="update" parameterType="com.study.vo.BoardVO">
         UPDATE board
-        SET board_writer= #{boardWriter},  board_title = #{boardTitle}, board_content = #{boardContent}, board_update_date=NOW() WHERE board_no = #{boardNo}
+        SET board_writer= #{boardWriter},
+            board_title = #{boardTitle},
+            board_content = #{boardContent},
+            board_update_date=NOW()
+        WHERE board_no = #{boardNo}
     </update>
 <!--비밀번호 확인 쿼리-->
     <select id="checkPassword" resultType="com.study.vo.BoardVO">
