@@ -1,4 +1,4 @@
-package com.study.boardspring;
+package com.study.boardspringvueback;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -40,9 +40,9 @@ public class DatabaseConfig {
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception{
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
-        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardCategoryVO");
-        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardVO");
-        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardReplyVO");
+//        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardCategoryVO");
+//        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardVO");
+//        sqlSessionFactoryBean.setTypeAliasesPackage("com.study.vo.BoardReplyVO");
         sqlSessionFactoryBean.setConfigLocation(applicationContext.getResource("classpath:/mybatis/mybatisConfig.xml"));
         sqlSessionFactoryBean.setMapperLocations(applicationContext.getResources("classpath:/mybatis/board.xml"));
 
