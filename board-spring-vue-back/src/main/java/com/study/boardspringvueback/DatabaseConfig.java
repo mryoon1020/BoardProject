@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:/application.properties")
-@MapperScan(basePackages = {"com.study.service"})
+@MapperScan(basePackages = {"com.study.boardspringvueback.service"})
 public class DatabaseConfig {
 
     @Autowired

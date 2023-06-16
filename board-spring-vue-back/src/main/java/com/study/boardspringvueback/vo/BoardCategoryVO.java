@@ -1,4 +1,4 @@
-package com.study.vo;
+package com.study.boardspringvueback.vo;
 
 import lombok.Data;
 

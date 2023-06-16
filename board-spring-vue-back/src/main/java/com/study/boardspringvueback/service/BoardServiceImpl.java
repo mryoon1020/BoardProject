@@ -1,8 +1,8 @@
-package com.study.service;
+package com.study.boardspringvueback.service;
 
-import com.study.vo.BoardCategoryVO;
-import com.study.vo.BoardReplyVO;
-import com.study.vo.BoardVO;
+import com.study.boardspringvueback.vo.BoardCategoryVO;
+import com.study.boardspringvueback.vo.BoardReplyVO;
+import com.study.boardspringvueback.vo.BoardVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

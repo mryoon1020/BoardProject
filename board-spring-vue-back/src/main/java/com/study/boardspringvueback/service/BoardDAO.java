@@ -1,4 +1,4 @@
-package com.study.service;
+package com.study.boardspringvueback.service;
 
 public class BoardDAO {
 

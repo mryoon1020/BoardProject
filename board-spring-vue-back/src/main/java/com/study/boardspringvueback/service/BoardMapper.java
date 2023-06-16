@@ -1,17 +1,17 @@
-package com.study.service;
+package com.study.boardspringvueback.service;
 
-import com.study.vo.BoardCategoryVO;
-import com.study.vo.BoardReplyVO;
-import com.study.vo.BoardVO;
+import com.study.boardspringvueback.vo.BoardCategoryVO;
+import com.study.boardspringvueback.vo.BoardReplyVO;
+import com.study.boardspringvueback.vo.BoardVO;
 
 import java.util.List;
 import java.util.Map;
 
-public interface BoardService {
+public interface BoardMapper {
     List<BoardCategoryVO> categoryList();
     List<BoardVO> list(Map map);
     BoardVO read(int boardNo);
-    void viewUp(int boardView, int boardNo);
+    void viewUp(int boardView,int boardNo);
     void write(BoardVO boardVO);
     void update(BoardVO boardVO);
     BoardVO checkPassword(int boardNo);
