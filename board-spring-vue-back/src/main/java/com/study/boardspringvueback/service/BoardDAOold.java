@@ -1,6 +1,6 @@
 package com.study.boardspringvueback.service;
 
-public class BoardDAO {
+public class BoardDAOold {
 
 //     private static SqlSessionFactory sessionFactory;
 //    static {
