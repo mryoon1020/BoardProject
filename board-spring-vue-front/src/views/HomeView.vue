@@ -12,7 +12,7 @@ export default {
   methods:{
     getData(){ 
       axios
-      .get('http://localhost:8000/')
+      .get('http://localhost:8000/list')
       .then(response => {
         console.log(response)
     })

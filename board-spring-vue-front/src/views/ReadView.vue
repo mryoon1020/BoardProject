@@ -68,3 +68,31 @@
 	</div>
 </div>
 </template>
+<script>
+import axios from 'axios'
+
+export default {
+  name: 'ReadView',
+  data(){
+    return {
+      result: []
+    }
+  },
+  created(){
+    this.getData()
+  },
+  methods: {
+    getData(){
+      axios
+      .get('http://localhost:8000/read?boardNo=')
+      .then(response => {
+        console.log(response)
+        this.result = response.data
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+    }
+  }
+}
+</script>

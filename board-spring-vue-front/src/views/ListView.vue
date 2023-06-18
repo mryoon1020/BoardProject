@@ -34,16 +34,18 @@
       </tr>
       </thead>
       <tbody>
-        <!-- <c:forEach var = "boardVO" items="${list}">
-            <tr>
-                <td>${boardVO.boardCategoryName}</td>
-                <td><a href="/read?boardNo=${boardVO.boardNo}">${boardVO.boardTitle}</a></td>
-                <td>${boardVO.boardWriter}</td>
-                <td>${boardVO.boardView}</td>
-                <td>${boardVO.boardWriteDate}</td>
-                <td>${boardVO.boardUpdateDate}</td>
+            <tr 
+            v-for="row in result" 
+            v-bind:key="row.no"
+            >
+              <td>{{row.boardCategoryName}}</td>
+              <td><a v-on:click="href(`${row.boardNo}`)">{{row.boardTitle}}</a></td>
+              <td>{{row.boardWriter}}</td>
+              <td>{{row.boardView}}</td>
+              <td>{{row.boardWriteDate}}</td>
+              <td>{{row.boardUpdateDate}}</td>
             </tr>
-        </c:forEach> -->
+
       </tbody>
     </table>
     <a href="/board/write" class="btn btn-primary pull-right">글쓰기</a>
@@ -65,3 +67,34 @@
   </div>
 </div>
 </template>
+<script>
+import axios from 'axios'
+
+export default {
+  name: 'ListView',
+  data(){
+    return {
+      result: []
+    }
+  },
+  created(){
+    this.getData()
+  },
+  methods: {
+    getData(){
+      axios
+      .get('http://localhost:8000/list')
+      .then(response => {
+        console.log(response)
+        this.result = response.data
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+    },
+    href(boardNo){
+      location.href='/board/read?boardNo='+boardNo
+    }
+  }
+}
+</script>
