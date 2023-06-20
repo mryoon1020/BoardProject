@@ -29,9 +29,10 @@ public class BoardController {
         List list = new ArrayList<>();
         list.add("안녕");
         list.add("이러면 되냐?");
-        list.add("됫으면 좋겠다");
+        list.add("됐으면 좋겠다");
         return list;
     }
+
     @GetMapping("/api")
     public String api(){
         System.out.println("/api 들렀음");
@@ -48,7 +49,7 @@ public class BoardController {
      * @param request : jsp와 통신할 도구
      * @return main.jsp
      */
-    @GetMapping("/list")
+    @GetMapping("/board/list")
     public List list(HttpServletRequest request){
 
         String currentPage = request.getParameter("currentPage");
@@ -58,17 +59,17 @@ public class BoardController {
         int totalPost = service.totalPost();
         int lastPage = 0;
 
-        Map map = new HashMap<>();
-
         if("".equals(checkNullChangeToEmptyString(currentPage))){
-            currentPage="1";
+            currentPage = "1";
         }else {
-            currentPage=request.getParameter("currentPage");
+            currentPage = request.getParameter("currentPage");
         }
 
         iCurrentPage = Integer.parseInt(currentPage);
         pageIndex = (iCurrentPage-1)*viewPost;
         lastPage = (int)Math.ceil((double)totalPost/viewPost);
+
+        Map map = new HashMap();
 
         map.put("startDate", checkNullChangeToEmptyString(request.getParameter("startDate")));
         map.put("endDate", checkNullChangeToEmptyString(request.getParameter("endDate")));
@@ -76,9 +77,15 @@ public class BoardController {
         map.put("keyWord",checkNullChangeToEmptyString(request.getParameter("keyWord")));
         map.put("pageIndex",pageIndex);
         map.put("viewPost",viewPost);
-
+//
         List<BoardVO> list = service.list(map);
 
+        return list;
+    }
+
+    @GetMapping("/board/categorylist")
+    public List boardCategoryList(){
+        List list = service.categoryList();
         return list;
     }
 }

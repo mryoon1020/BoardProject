@@ -9,11 +9,12 @@
         <input type="date" name="endDate">
       </div>
       <div>
-        <select name="boardCategory" id="boardCategory">
-            <!-- <c:forEach var="cateList" items="${cateList}">
+        <BoardCategory />
+        <!-- <select name="boardCategory" id="boardCategory">
+            <c:forEach var="cateList" items="${cateList}">
                 <option value="${cateList.boardCategoryNo}">${cateList.boardCategoryName}</option>
-            </c:forEach> -->
-        </select>
+            </c:forEach>
+        </select> -->
       </div>
       <div>
         <input type="text" name="keyWord">
@@ -68,29 +69,35 @@
 </div>
 </template>
 <script>
+import BoardCategory from '@/components/BoardCategory.vue'
+import {ref} from 'vue'
 import axios from 'axios'
 
 export default {
   name: 'ListView',
   data(){
     return {
-      result: []
+      result: ref([])
     }
   },
-  created(){
+  mounted(){
     this.getData()
   },
+
   methods: {
-    getData(){
-      axios
-      .get('http://localhost:8000/list')
-      .then(response => {
+    async getData(){
+      
+      try{
+
+        const response = await axios.get('http://localhost:8000/board/list')
         console.log(response)
         this.result = response.data
-      })
-      .catch((error)=>{
-        console.log(error)
-      })
+
+      } catch(error) {
+
+          console.log(error)  
+
+      }
     },
     href(boardNo){
       location.href='/board/read?boardNo='+boardNo

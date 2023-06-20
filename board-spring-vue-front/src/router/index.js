@@ -9,26 +9,26 @@ const routes = [
   },
   {
     path: '/board/list',
-    name: 'ListView',
-    component: () => import(/* webpackChunkName: "board" */ '../views/ListView.vue')
+    name: 'BoardListView',
+    component: () => import(/* webpackChunkName: "board" */ '../views/BoardListView.vue')
   },
   {
     path: '/board/read',
-    name: 'ReadView',
+    name: 'BoardReadView',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "board" */ '../views/ReadView.vue')
+    component: () => import(/* webpackChunkName: "board" */ '../views/BoardReadView.vue')
   },
   {
     path: '/board/write',
-    name: 'WriteView',
-    component: () => import(/* webpackChunkName: "board" */ '../views/WriteView.vue')
+    name: 'BoardWriteView',
+    component: () => import(/* webpackChunkName: "board" */ '../views/BoardWriteView.vue')
   },
   {
     path: '/board/update',
-    name: 'UpdateView',
-    component: () => import(/* webpackChunkName: "board" */ '../views/UpdateView.vue')
+    name: 'BoardUpdateView',
+    component: () => import(/* webpackChunkName: "board" */ '../views/BoardUpdateView.vue')
   }
 ]
 
