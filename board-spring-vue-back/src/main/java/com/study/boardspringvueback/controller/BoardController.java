@@ -1,11 +1,11 @@
 package com.study.boardspringvueback.controller;
 
 import com.study.boardspringvueback.service.BoardService;
+import com.study.boardspringvueback.vo.BoardPageSearchVO;
 import com.study.boardspringvueback.vo.BoardVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -49,10 +49,10 @@ public class BoardController {
      * @param request : jsp와 통신할 도구
      * @return main.jsp
      */
-    @GetMapping("/board/list")
-    public List list(HttpServletRequest request){
+    @PostMapping("/board/list")
+    public List list(@RequestBody BoardPageSearchVO boardPageSearchVO, HttpServletRequest request){
 
-        String currentPage = request.getParameter("currentPage");
+        String currentPage = boardPageSearchVO.getPageIndex();
         int iCurrentPage = 0;
         int pageIndex = 0;
         int viewPost = 10;
@@ -69,23 +69,24 @@ public class BoardController {
         pageIndex = (iCurrentPage-1)*viewPost;
         lastPage = (int)Math.ceil((double)totalPost/viewPost);
 
-        Map map = new HashMap();
-
-        map.put("startDate", checkNullChangeToEmptyString(request.getParameter("startDate")));
-        map.put("endDate", checkNullChangeToEmptyString(request.getParameter("endDate")));
-        map.put("boardCategory", checkNullChangeToEmptyString(request.getParameter("boardCategory")));
-        map.put("keyWord",checkNullChangeToEmptyString(request.getParameter("keyWord")));
-        map.put("pageIndex",pageIndex);
-        map.put("viewPost",viewPost);
+//        System.out.println(boardPageSearchVO);
+//        Map map = new HashMap();
 //
-        List<BoardVO> list = service.list(map);
+//        map.put("startDate", checkNullChangeToEmptyString(request.getParameter("startDate")));
+//        map.put("endDate", checkNullChangeToEmptyString(request.getParameter("endDate")));
+//        map.put("boardCategory", checkNullChangeToEmptyString(request.getParameter("boardCategory")));
+//        map.put("keyWord",checkNullChangeToEmptyString(request.getParameter("keyWord")));
+//        map.put("pageIndex",pageIndex);
+//        map.put("viewPost",viewPost);
+
+        List<BoardVO> list = service.list(boardPageSearchVO);
 
         return list;
     }
 
-    @GetMapping("/board/categorylist")
+    @GetMapping("/board/category")
     public List boardCategoryList(){
-        List list = service.categoryList();
-        return list;
+        List categoryList = service.categoryList();
+        return categoryList;
     }
 }

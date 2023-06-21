@@ -1,6 +1,7 @@
 package com.study.boardspringvueback.service;
 
 import com.study.boardspringvueback.vo.BoardCategoryVO;
+import com.study.boardspringvueback.vo.BoardPageSearchVO;
 import com.study.boardspringvueback.vo.BoardReplyVO;
 import com.study.boardspringvueback.vo.BoardVO;
 
@@ -22,7 +23,7 @@ public interface BoardMapper {
      * @param map 검색 조건이 담김
      * @return 쿼리결과
      */
-    List<BoardVO> list(Map map);
+    List<BoardVO> list(BoardPageSearchVO boardPageSearchVO);
 
     /**
      * 게시글 읽기 쿼리 호출

@@ -1,6 +1,7 @@
 package com.study.boardspringvueback.service;
 
 import com.study.boardspringvueback.vo.BoardCategoryVO;
+import com.study.boardspringvueback.vo.BoardPageSearchVO;
 import com.study.boardspringvueback.vo.BoardReplyVO;
 import com.study.boardspringvueback.vo.BoardVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,11 @@ public class BoardService {
 
     /**
      * 게시글목록 조회 DAO호출 메서드
-     * @param map 페이징, 게시긇 검색정보 ( keyWord, boardCategory, startDate, endDate, pageIndex, viewPost 정보가담김)
+     * @param boardPageSearchVO 페이징, 게시긇 검색정보 ( keyWord, boardCategory, startDate, endDate, pageIndex, viewPost 정보가담김)
      * @return 게시글 리스트 매퍼실행결과
      */
-    public List<BoardVO> list(Map map) {
-        return boardDAO.list(map);
+    public List<BoardVO> list(BoardPageSearchVO boardPageSearchVO) {
+        return boardDAO.list(boardPageSearchVO);
     }
 
     /**

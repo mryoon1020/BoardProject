@@ -75,21 +75,44 @@ import axios from 'axios'
 
 export default {
   name: 'ListView',
+  components: {
+
+    BoardCategory,
+
+  },//component end
+
   data(){
     return {
+
       result: ref([])
-    }
-  },
+
+    }//return end
+
+  },//data() end
   mounted(){
-    this.getData()
-  },
+    this.getBoardList()
+  },//mounted() end
 
   methods: {
-    async getData(){
+    async getBoardList(){
       
+      let searchCondition = {
+            boardCategoryNo : '',
+            startDate : '',
+            endDate : '',
+            searchKeyWord : '',
+            pageIndex : '',
+            viewPost : 10,
+          }
+
       try{
 
-        const response = await axios.get('http://localhost:8000/board/list')
+        const response = await axios.post('http://localhost:8000/board/list',JSON.stringify(searchCondition),{
+          headers: {
+            "Content-Type": `application/json`,
+          },
+        });
+
         console.log(response)
         this.result = response.data
 
@@ -102,6 +125,6 @@ export default {
     href(boardNo){
       location.href='/board/read?boardNo='+boardNo
     }
-  }
+  }//method end
 }
 </script>

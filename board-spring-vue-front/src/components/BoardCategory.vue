@@ -1,32 +1,34 @@
 <template>
-    <div>
         <select name="boardCategory" id="boardCategory">
             <option 
-            v-for="row in categoryList" 
-            v-bind:key="row.no"
+            v-for="(item, index) in categoryList"
+            v-bind:key="index"
+            :value="item.boardCategoryNo"
             >
-            {{row.boardCategoryName}}
+            {{item.boardCategoryName}}
             </option>
         </select>
-    </div>
 </template>
 
 <script>
-import { defineComponent } from '@vue/composition-api'
+import {ref} from 'vue'
 import axios from 'axios'
 
 export default {
     
     name: 'BoardCategory',
-    boardCategory(){
+    data(){
         return {
             categoryList: ref([])
         }
     },
+    mounted(){
+        this.getBoardCategory()
+    },
     methods: {
         async getBoardCategory(){
             try{
-                const response = await axios.get('http://localhost:8000/board/categorylist')
+                const response = await axios.get('http://localhost:8000/board/category')
                 console.log(response)
                 this.categoryList = response.data
             } catch{
