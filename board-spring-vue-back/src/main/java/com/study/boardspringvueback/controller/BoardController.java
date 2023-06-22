@@ -49,44 +49,52 @@ public class BoardController {
      * @param request : jsp와 통신할 도구
      * @return main.jsp
      */
-    @PostMapping("/board/list")
-    public List list(@RequestBody BoardPageSearchVO boardPageSearchVO, HttpServletRequest request){
+    @GetMapping("/board/list")
+    public List list(BoardPageSearchVO boardPageSearchVO, HttpServletRequest request){
 
-        String currentPage = boardPageSearchVO.getPageIndex();
-        int iCurrentPage = 0;
-        int pageIndex = 0;
-        int viewPost = 10;
-        int totalPost = service.totalPost();
-        int lastPage = 0;
-
-        if("".equals(checkNullChangeToEmptyString(currentPage))){
-            currentPage = "1";
-        }else {
-            currentPage = request.getParameter("currentPage");
-        }
-
-        iCurrentPage = Integer.parseInt(currentPage);
-        pageIndex = (iCurrentPage-1)*viewPost;
-        lastPage = (int)Math.ceil((double)totalPost/viewPost);
-
-//        System.out.println(boardPageSearchVO);
-//        Map map = new HashMap();
+//        String currentPage = boardPageSearchVO.getPageIndex();
+//        int iCurrentPage = 0;
+//        int pageIndex = 0;
+//        int viewPost = 10;
+//        int totalPost = service.totalPost();
+//        int lastPage = 0;
 //
-//        map.put("startDate", checkNullChangeToEmptyString(request.getParameter("startDate")));
-//        map.put("endDate", checkNullChangeToEmptyString(request.getParameter("endDate")));
-//        map.put("boardCategory", checkNullChangeToEmptyString(request.getParameter("boardCategory")));
-//        map.put("keyWord",checkNullChangeToEmptyString(request.getParameter("keyWord")));
-//        map.put("pageIndex",pageIndex);
-//        map.put("viewPost",viewPost);
+//        if("".equals(checkNullChangeToEmptyString(currentPage))){
+//            currentPage = "1";
+//        }else {
+//            currentPage = request.getParameter("currentPage");
+//        }
+//
+//        iCurrentPage = Integer.parseInt(currentPage);
+//        pageIndex = (iCurrentPage-1)*viewPost;
+//        lastPage = (int)Math.ceil((double)totalPost/viewPost);
 
         List<BoardVO> list = service.list(boardPageSearchVO);
 
         return list;
     }
 
+    /**
+     * 게시판 카테고리조회 메서드
+     * front에서 component로 쪼갰음
+     * @return 카테고리 목록
+     */
     @GetMapping("/board/category")
     public List boardCategoryList(){
         List categoryList = service.categoryList();
         return categoryList;
     }
+
+    /**
+     * pagenation 처리를 위해 조건에 맞는 게시글 목록을 조회
+     * @return
+     */
+    @GetMapping("/board/countTotalPost")
+    public int boardCountTotalPost(){
+        int totalPost = service.totalPost();
+        System.out.println("contTotalPost 들어왔다");
+        System.out.println(totalPost);
+        return totalPost;
+    }
+
 }

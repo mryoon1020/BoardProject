@@ -25,7 +25,7 @@ public class BoardVO {
     private String boardWriter;
     private String boardPassword;
     private String boardContent;
-    private int boardView;
+    private String boardView;
     private String boardWriteDate;
     private String boardUpdateDate;
 }
