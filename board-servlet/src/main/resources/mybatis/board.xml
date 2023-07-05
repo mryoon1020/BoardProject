@@ -14,4 +14,63 @@
         WHERE board_no = #{boardNo}
         ORDER BY board_reply_no DESC LIMIT 5;
     </select>
+    <!--게시글 작성 쿼리-->
+    <insert id="write" parameterType="com.study.vo.BoardVO">
+        INSERT INTO board(board_category_name, board_title, board_writer,
+                          board_password, board_content, board_view,
+                          board_write_date)
+        VALUES(#{boardCategoryName},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
+    </insert>
+    <!--조회수 증가 쿼리-->
+    <update id="viewUp" parameterType="int">
+        UPDATE board SET board_view=#{boardView}+1 WHERE board_no =#{boardNo}
+    </update>
+    <!--게시글 읽기 쿼리-->
+    <select id="read" resultType="com.study.vo.BoardVO">
+        SELECT b.board_no,
+               b.board_category_no,
+               b.board_title,
+               b.board_writer,
+               b.board_content,
+               b.board_view,
+               b.board_write_date,
+               b.board_update_date,
+               bc.board_category_name
+        FROM board b JOIN board_category bc ON b.board_category_no = bc.board_category_no
+        WHERE board_no = #{boardNo}
+    </select>
+    <!--게시글 수정 쿼리-->
+    <update id="update" parameterType="com.study.vo.BoardVO">
+        UPDATE board
+        SET board_writer= #{boardWriter},
+            board_title = #{boardTitle},
+            board_content = #{boardContent},
+            board_update_date=NOW()
+        WHERE board_no = #{boardNo}
+    </update>
+    <!--비밀번호 확인 쿼리-->
+    <select id="checkPassword" resultType="com.study.vo.BoardVO">
+        SELECT board_password
+        FROM board
+        WHERE board_no=#{boardNo}
+    </select>
+    <!--게시글 삭제 쿼리-->
+    <delete id="delete" parameterType="int">
+        DELETE  FROM board WHERE board_no = #{boardNo}
+    </delete>
+    <!--댓글 작성 쿼리-->
+    <insert id="replyWrite" parameterType="com.study.vo.BoardReplyVO">
+        INSERT INTO board_reply (board_no, board_reply_content, board_reply_date)
+        VALUES (#{boardNo}, #{boardReplyContent}, NOW())
+    </insert>
+    <!--댓글 목록 조회 쿼리-->
+    <select id="replyList" parameterType="int" resultType="com.study.vo.BoardReplyVO">
+        SELECT * FROM board_reply
+        WHERE board_no = #{boardNo}
+        ORDER BY board_reply_no DESC LIMIT 5
+    </select>
+    <!--전체 게시글 조회 쿼리-->
+    <select id="totalPost" resultType="int">
+        SELECT count(*) FROM board
+    </select>
 </mapper>

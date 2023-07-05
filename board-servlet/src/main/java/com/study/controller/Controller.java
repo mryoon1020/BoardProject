@@ -40,10 +40,6 @@ public class Controller extends HttpServlet {
     /**
      * get 요청시 동작
      *
-     * uri : jsp 페이지애서 요청하는 주소를 담는 변수
-     * /WEB-INF/views/update.jsp : 게시글수정 양식 호출 물리주소
-     * /WEB-INF/views/write.jsp : 게시글 작성 양식 호출 물리주소
-     *
      * @param request   an {@link HttpServletRequest} object that
      *                  contains the request the client has made
      *                  of the servlet
@@ -66,15 +62,6 @@ public class Controller extends HttpServlet {
     /**
      * post 요청시 동작
      *
-     * uri : jsp 페이지애서 요청하는 주소를 담는 변수
-     *
-     * @TODO : post요청이 계속 500에러가 나고 있음,
-     *         error message: Cannot forward after response has been committed
-     *         get요청으로 변경하면 405에러가 나옴
-     *         error message: HTTP method POST is not supported by this URL
-     *         response.sendRedirect(result)를 사용해도 안됨
-     *         절대경로/상대경로 둘다 안됨
-     *
      * @param request   an {@link HttpServletRequest} object that
      *                  contains the request the client has made
      *                  of the servlet
@@ -94,6 +81,13 @@ public class Controller extends HttpServlet {
         }
     }
 
+    /**
+     * 화면에서 요청되는 파라미터인 action의 값을 통해 서비스를 호출함
+     * action값이 빈값이거나 null일때 list를 요청함
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     private void doAction(HttpServletRequest request, HttpServletResponse response) throws Exception{
 
         String action = request.getParameter("action");
