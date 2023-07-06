@@ -60,62 +60,6 @@
 			}
 		}
 
-
-	<%--function writeReply() {--%>
-	<%--	const value = document.getElementById("boardReply").value--%>
-	<%--	const form = document.getElementById("replyForm")--%>
-
-	<%--	if(!value){--%>
-	<%--		alert("내용을 입력해주세요")--%>
-	<%--	}else{--%>
-	<%--		document.getElementById("replyForm").submit();--%>
-	<%--		form.addEventListener('submit',(e) =>{--%>
-	<%--			e.preventDefault()--%>
-	<%--		});--%>
-
-	<%--		const dataSend = new FormData(form);--%>
-	<%--		const data = new URLSearchParams(dataSend);--%>
-
-	<%--		fetch("/board?action=reply&boardNo=<%= request.getParameter("boardNo")%>",{--%>
-	<%--			method: 'POST',--%>
-	<%--			body:	data,--%>
-	<%--		}).then(response => {--%>
-	<%--			if(response.ok){--%>
-	<%--				reply();--%>
-	<%--			}else{--%>
-
-	<%--			}--%>
-	<%--		})--%>
-	<%--			.then(data => console.log(data))--%>
-	<%--				.catch(error => console.log(error))	;--%>
-
-	<%--	}--%>
-	<%--}--%>
-
-	<%--function reply(){--%>
-	<%--	let replyList;--%>
-
-	<%--	fetch("/board?action=replyList&boardNo=<%= request.getParameter("boardNo")%>",{--%>
-	<%--		method:'GET',--%>
-	<%--	}).then(response => {--%>
-	<%--		response.json();})--%>
-	<%--			.then(data => {--%>
-
-	<%--				console.log(data);--%>
-
-	<%--				// let replyListArea = document.getElementById('replyListArea');--%>
-	<%--				// let replyList = document.createElement('p');--%>
-	<%--				// let makeHr = document.getElementById('hr');--%>
-	<%--				//--%>
-	<%--				// replyList.setAttribute();--%>
-	<%--				// replyList.innerHTML = data.--%>
-	<%--				// replyListArea.setAttribute()--%>
-	<%--			}--%>
-
-	<%--			)--%>
-
-	<%--}--%>
-
 	function modalOpen(){
 			document.getElementById("modal").style.display="block";
 		}
@@ -128,11 +72,12 @@
 </head>
 <body>
 <%
-	int boardNo = 0;
-	if(request.getParameter("boardNo") != null){
-		boardNo = Integer.parseInt(request.getParameter("boardNo"));
-	}
-	BoardVO boardVO = new BoardDAO().BoardRead(boardNo); %>
+	int boardNo = Integer.parseInt(request.getParameter("boardNo"));
+
+	BoardDAO boardDAO = new BoardDAO();
+	BoardVO boardVO = boardDAO.BoardRead(boardNo);
+
+%>
 <div>
 	<div>
 		<div>작성자</div>
@@ -153,13 +98,12 @@
 	<div>
 		<div>내용</div>
 		<div><%= boardVO.getBoardContent()%></div>
-		<div><%-- boardVO.getBoardFile() --%>첨부파일 이미지 + 첨부파일</div>
+		<div>첨부파일 이미지 + 첨부파일</div>
 	</div>
 
 	<div>
 
 		<%
-			BoardDAO boardDAO = new BoardDAO();
 			List<BoardReplyVO> replyList = boardDAO.boardReplyList(boardVO.getBoardNo());
 
 			for(int i=0; i<replyList.size(); i++){

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * boardWriter : 사용자가 수정한 게시글 작성자
  * boardTitle : 사용자가 수정한 게시글 제목
  * boardContent : 사용자가 수정한 게시글 내용
- * flag : 쿼리동작여부를 판단하기 위한 변수, updateAction.jsp에서 활용됨
+ * 비밀번호 확인후 불일치시 비밀번호 오류 페이지로 넘어감
  */
 public class BoardServiceUpdateAction implements BoardService{
 
@@ -32,7 +32,6 @@ public class BoardServiceUpdateAction implements BoardService{
             String boardTitle = request.getParameter("boardTitle");
             String boardContent = request.getParameter("boardContent");
             String boardNo = request.getParameter("boardNo");
-//        String bbsFile = request.getParameter("boardFile");
 
             boardVO.setBoardWriter(boardWriter);
             boardVO.setBoardTitle(boardTitle);
@@ -40,19 +39,17 @@ public class BoardServiceUpdateAction implements BoardService{
             boardVO.setBoardPassword(boardPassword);
             boardVO.setBoardNo(Integer.parseInt(boardNo));
 
-            boolean flag = false;
 
             BoardVO checkPassword = new BoardDAO().checkPassword(Integer.parseInt(boardNo));
 
             if(!boardPassword.equals(checkPassword.getBoardPassword())){
-                request.setAttribute("flag", !flag);
-
+                request.getRequestDispatcher("/WEB-INF/views/passwordError.jsp").forward(request, response);
             }else{
                 BoardDAO boardDAO = new BoardDAO();
                 boardDAO.update(boardVO);
+                response.sendRedirect("/board");
             }
 
-            response.sendRedirect("/board");
         }
 
 

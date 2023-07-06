@@ -21,7 +21,6 @@ public class BoardServiceWriteAction implements BoardService{
     @Override
     public void runService(HttpServletRequest request, HttpServletResponse response) throws Exception{
 
-
         String currentMethod = request.getMethod();
         if(currentMethod.equalsIgnoreCase("get")) {
             request.getRequestDispatcher("/WEB-INF/views/write.jsp").forward(request, response);
@@ -42,15 +41,9 @@ public class BoardServiceWriteAction implements BoardService{
             boardVO.setBoardTitle(boardTitle);
             boardVO.setBoardContent(boardContent);
 
-            int result = boardDAO.write(boardVO);
+            boardDAO.write(boardVO);
 
-            if(result != -1){
-                request.setAttribute("flag", !flag);
-            }else{
-                request.setAttribute("flag", flag);
-            }
-
-            response.sendRedirect("/");
+            response.sendRedirect("/board?action=list");
         }
 
 

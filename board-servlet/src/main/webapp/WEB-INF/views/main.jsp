@@ -10,7 +10,7 @@
     <title>Title</title>
 </head>
 <body>
-
+<h1>main.jsp</h1>
 <div class="container">
   <div class="row">
     <form method="post" action="main.jsp">
@@ -63,6 +63,7 @@
           <%= boardList.get(i).getBoardTitle().replaceAll(" ","&nbsp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll("\n","<br>") %></a>
         </td>
         <td><%= boardList.get(i).getBoardWriter()%></td>
+        <td><%= boardList.get(i).getBoardView()%></td>
         <td><%= boardList.get(i).getBoardWriteDate() %></td>
         <%
           if(boardList.get(i).getBoardUpdateDate()==null){
@@ -101,6 +102,5 @@
   </div>
 </div>
 
-<h1>main.jsp</h1>
 </body>
 </html>

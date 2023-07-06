@@ -14,12 +14,7 @@ public class BoardServiceRead implements BoardService{
     @Override
     public void runService(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        BoardDAO boardDAO = new BoardDAO();
-        int boardNo = Integer.parseInt(request.getParameter("boardNo"));
-
-        boardDAO.BoardRead(boardNo);
-        boardDAO.boardReplyList(boardNo);
-
         request.getRequestDispatcher("/WEB-INF/views/read.jsp").forward(request, response);
+
     }
 }

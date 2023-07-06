@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="com.study.board.BoardDAO" %>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="com.study.board.BoardCategoryVO" %>
+<%@ page import="java.util.List" %>
 <% request.setCharacterEncoding("UTF-8"); %>
 <!DOCTYPE html>
 <html>
@@ -31,12 +31,11 @@
 					if(boardCategoryNo === '1'){
 						alert("카테고리를 선택해주세요.");
 					}else {
-						alert("??");
+						alert("글쓰기 성공");
 						document.getElementById('writeForm').submit();
 					}
 				}
 			}
-
 		}
 
 	</script>
@@ -52,7 +51,7 @@
 			<select name="boardCategory" id="boardCategory">
 				<%
 					BoardDAO boardDAO = new BoardDAO();
-					ArrayList<BoardCategoryVO> list = boardDAO.getCategoryList();
+					List<BoardCategoryVO> list = boardDAO.getCategoryList();
 
 					for(int i =0; i<list.size(); i++){
 				%>
