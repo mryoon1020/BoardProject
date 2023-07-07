@@ -9,5 +9,5 @@
 
 > DB 설계
 
- ![erd](BoardProject\board-servlet\erd.png)
+ ![erd](https://github.com/mryoon1020/BoardProject/blob/master/board-servlet/erd.png)
 
