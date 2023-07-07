@@ -28,39 +28,10 @@ public class BoardDAO {
      */
     public List<BoardCategoryVO> getCategoryList(){
 
-//        SqlSessionFactory sessionFactory = SqlMapConfig.getSqlMapInstance();
         SqlSession sqlSession = sessionFactory.openSession();//커넥션가지고 있는 세션열기
         return sqlSession.selectList("selectCategoryList");//단건조회
     }
 
-    /**
-     * 카테고리 1개 조회 메서드
-     * 등록된 글의 카테고리 번호를 활용하여 db에서 다시 카테고리를 조회해서 읽어온다
-     * @param boardCategoryName boardList(), boardRead()에서 받아오는 category number,
-     */
-//    public String readCategoryName(int boardCategoryName){
-//        Connection conn = DbOpen.getConnection();
-//        PreparedStatement pstmt = null;
-//        ResultSet rs = null;
-//        String sql = "SELECT board_category_name FROM board_category WHERE board_category_no=?";
-//
-//        try {
-//            BoardCategoryVO boardCategory = new BoardCategoryVO();
-//            pstmt = conn.prepareStatement(sql);
-//            pstmt.setInt(1, boardCategoryName);
-//            rs = pstmt.executeQuery();
-//            if (rs.next()){
-//                boardCategory.setBoardCategoryName(rs.getString(1));
-//                return boardCategory.getBoardCategoryName();
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }finally {
-//            DbClose.close(rs, pstmt, conn);
-//        }
-//        return null;
-//    }
     /**
      * 글생성 매서드
      * @param boardVO : write.jsp에서 writeAction을 통해 넘어오는 데이터 저장객체
@@ -89,28 +60,16 @@ public class BoardDAO {
      * @return
      */
     public int boardCountPost(){
-        Connection conn = DbOpen.getConnection();
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        String sql = "SELECT count(*) FROM board ";
-        try {
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery(sql);
-            int a =0;
-            if(rs.next()){
-                return rs.getInt(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
-            DbClose.close(rs, pstmt, conn);
-        }
-        return -1; //조회실패했을 때
+        SqlSession sqlSession = sessionFactory.openSession();
+        return sqlSession.selectOne("totalPost");
     }
 
+    /**
+     * 페이징 계산에 사용되는 요소
+     * @return lastPage : 제일 마지막 페이지 번호
+     */
     public int boardGetLastPage(){
         int totalPost = 0;
-        int firstPage = 0;
         int lastPage = 0;
         totalPost = boardCountPost();
         lastPage = (int)Math.ceil((double)totalPost/10);
@@ -128,7 +87,6 @@ public class BoardDAO {
     public BoardVO BoardRead(int boardNo) {
 
         SqlSession sqlSession = sessionFactory.openSession();
-        viewUp(boardNo);
 
         return sqlSession.selectOne( "read",boardNo);
     }
@@ -151,21 +109,10 @@ public class BoardDAO {
      * @param boardNo 게시글번호
      * @return
      */
-    public int boardDelete(int boardNo) {
-        Connection conn = DbOpen.getConnection();
-        PreparedStatement pstmt = null;
-        String sql = "DELETE  FROM board WHERE board_no =?";
-
-        try {
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, boardNo);
-            return pstmt.executeUpdate();
-        }catch(Exception e) {
-            e.printStackTrace();
-        }finally {
-            DbClose.close(pstmt, conn);
-        }
-        return -1; //데이터베이스 오류
+    public void boardDelete(int boardNo) {
+        SqlSession sqlSession = sessionFactory.openSession(true);
+        sqlSession.delete("delete", boardNo);
+        sqlSession.close();
     }
 
     /**
@@ -182,12 +129,12 @@ public class BoardDAO {
 
     /**
      * 조회수 증가 기능 메서드, boardRead()와 연동
-     * @param boardNo: 게시글 번호
+     * @param boardVO: 게시글 정보(기존조회수를 꺼내오기 위함)
      */
 
-    public void viewUp(int boardNo){
+    public void viewUp(BoardVO boardVO){
         SqlSession sqlSession = sessionFactory.openSession(true);
-        sqlSession.update( "viewUp",boardNo);
+        sqlSession.update( "viewUp",boardVO);
         sqlSession.close();
     }
 

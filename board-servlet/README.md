@@ -6,4 +6,7 @@
 - mySQL
 - myBatis
 - JSP/Servlet
-- 
+
+> DB 설계
+
+ ![erd](.\board-servlet\erd.png)

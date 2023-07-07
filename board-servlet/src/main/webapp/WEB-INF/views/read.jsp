@@ -76,6 +76,7 @@
 
 	BoardDAO boardDAO = new BoardDAO();
 	BoardVO boardVO = boardDAO.BoardRead(boardNo);
+	boardDAO.viewUp(boardVO);
 
 %>
 <div>
@@ -137,7 +138,7 @@
 	<div id="modal">
 
 		<div class="modal_content">
-			<form method="post" action="/board?action=delete&boardNo=<%=	boardNo%>" id="deleteForm">
+			<form method="post" action="/board?action=delete&boardNo=<%=boardNo%>" id="deleteForm">
 			<h2>비밀번호 확인</h2>
 			<div>비밀번호</div>
 			<div><input type="hidden" value="<%=boardNo%>" /></div>
