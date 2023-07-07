@@ -2,10 +2,12 @@
 
 > 사용 기술
 
+- JAVA
 - gradle
 - mySQL
 - myBatis
 - JSP/Servlet
+- Javascript
 
 > DB 설계
 
