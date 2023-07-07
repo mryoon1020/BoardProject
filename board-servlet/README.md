@@ -9,4 +9,5 @@
 
 > DB 설계
 
- ![erd](.\board-servlet\erd.png)
+ ![erd](BoardProject\board-servlet\erd.png)
+
