@@ -13,7 +13,7 @@
 <h1>main.jsp</h1>
 <div class="container">
   <div class="row">
-    <form method="post" action="main.jsp">
+    <form method="post" action="/board?action=list">
       <div>
         <div>등록일</div>
         <input type="date" name="startDate"> ~
