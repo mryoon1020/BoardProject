@@ -11,7 +11,7 @@
 
 > DB 설계
 
- ![erd](https://github.com/mryoon1020/BoardProject/blob/master/board-servlet/erd.png)
+ ![erd](./IMG/erd.png)
 
 >기능 구성
 
@@ -30,4 +30,4 @@
 - DAO는 쿼리 호출기능만 할수 있도록 최소화
 - controller에 들어갈 post, get 요청 구분에 신경 쓸필요없음
 
-![flow](https://github.com/mryoon1020/BoardProject/blob/master/board-servlet/flow.png)
+![flow](./img/flow.png)
