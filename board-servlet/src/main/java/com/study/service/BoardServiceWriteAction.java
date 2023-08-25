@@ -43,7 +43,8 @@ public class BoardServiceWriteAction implements BoardService{
 
             boardDAO.write(boardVO);
 
-            response.sendRedirect("/board?action=list");
+//            response.sendRedirect("/board?action=list");
+            request.getRequestDispatcher("/board?action=list").forward(request, response);
         }
 
 
