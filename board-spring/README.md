@@ -48,5 +48,3 @@
   - 글 삭제 역시 passwordCheck 메서드를 사용하여 비밀 번호를 확인합니다.
 - 댓글 쓰기 `POST /replyWrite`
 
-## Truoble Shooting
-
