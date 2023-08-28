@@ -46,10 +46,10 @@
     </select>
 <!--게시글 작성 쿼리-->
     <insert id="write" parameterType="com.study.vo.BoardVO">
-        INSERT INTO board(board_category_name, board_title, board_writer,
+        INSERT INTO board(board_category_no, board_title, board_writer,
                           board_password, board_content, board_view,
                           board_write_date)
-        VALUES(#{boardCategoryName},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
+        VALUES(#{boardCategoryNo},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
     </insert>
 <!--조회수 증가 쿼리-->
     <update id="viewUp" parameterType="int">
