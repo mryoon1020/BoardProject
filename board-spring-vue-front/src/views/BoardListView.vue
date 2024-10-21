@@ -40,7 +40,7 @@
             v-bind:key="row.no"
             >
               <td>{{row.boardCategoryName}}</td>
-              <td><a v-on:click="href(`${row.boardNo}`)">{{row.boardTitle}}</a></td>
+              <td><a v-on:click="readPost(`${row.boardNo}`)">{{row.boardTitle}}</a></td>
               <td>{{row.boardWriter}}</td>
               <td>{{row.boardView}}</td>
               <td>{{row.boardWriteDate}}</td>
@@ -49,6 +49,10 @@
 
       </tbody>
     </table>
+    <!-- 페이징처리부분 -->
+    <a v-on:click=getBoardList(i) v-for="i in endPage" :key="i">&nbsp;{{i}}&nbsp;</a>
+    <br>
+    <!-- 글쓰기 버튼 -->
     <a href="/board/write" class="btn btn-primary pull-right">글쓰기</a>
   </div>
     <br>
@@ -70,11 +74,14 @@
 </template>
 <script>
 import BoardCategory from '@/components/BoardCategory.vue'
+
 import {ref} from 'vue'
 import axios from 'axios'
+import BoardAxios from "@/BoardAxios";
 
 export default {
-  name: 'ListView',
+  name: 'BoardListView',
+    inject[BoardAxios],
   components: {
 
     BoardCategory,
@@ -84,6 +91,7 @@ export default {
   data(){
     return {
 
+      endPage: ref([]),
       result: ref([])
 
     }//return end
@@ -91,27 +99,47 @@ export default {
   },//data() end
   mounted(){
     this.getBoardList()
+        .thenI() {
+
+      }
   },//mounted() end
 
   methods: {
-    async getBoardList(){
-      
-      let searchCondition = {
+
+    async getBoardList(pageNo){
+
+      try{
+
+        console.log("pageno:  "+pageNo)
+        let viewPost = 10;
+        let pageIndex = pageNo ? (pageNo-1)*viewPost : 1;
+        console.log(pageIndex)
+
+        const responsePage = await axios.get('http://localhost:8000/board/countTotalPost',{
+                    params:{
+                        boardCategoryNo : '',
+                        startDate : '',
+                        endDate : '',
+                        searchKeyWord : '',
+                        pageIndex : pageIndex,
+                        viewPost : viewPost,
+                    }
+                })
+        
+        this.endPage = Math.ceil((responsePage.data)/viewPost);
+
+        const response = await axios.get('http://localhost:8000/board/list',{
+          params: {
             boardCategoryNo : '',
             startDate : '',
             endDate : '',
             searchKeyWord : '',
-            pageIndex : '',
-            viewPost : 10,
-          }
-
-      try{
-
-        const response = await axios.post('http://localhost:8000/board/list',JSON.stringify(searchCondition),{
-          headers: {
-            "Content-Type": `application/json`,
-          },
-        });
+            pageIndex : pageIndex,
+            viewPost : viewPost,
+            }
+        }
+        
+        );
 
         console.log(response)
         this.result = response.data
@@ -122,8 +150,13 @@ export default {
 
       }
     },
-    href(boardNo){
-      location.href='/board/read?boardNo='+boardNo
+    readPost(boardNo){
+      this.$router.push({
+        name: "BoardReadView",
+        params:{
+          boardNo : boardNo,
+        }
+      })
     }
   }//method end
 }

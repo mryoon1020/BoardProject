@@ -3,23 +3,28 @@
     <div>
 	<div>
 		<div>작성자</div>
-		<!-- <div>${boardVO.boardWriter}</div> -->
+		<div>{{result.boardWriter}}</div>
+
 		<div>등록일시</div>
-		<!-- <div>${boardVO.boardWriteDate}</div> -->
+		<div>{{result.boardWriteDate}}</div>
 		<div>수정일시</div>
-		<!-- <div>${boardVO.boardUpdateDate}</div> -->
+		<div>{{result.boardUpdateDate}}</div>
 	</div>
 	<div>
 		<div>카테고리</div>
-		<!-- <div>${boardVO.boardCategoryName}</div> -->
+		<div>{{result.boardCategoryName}}</div>
+
 		<div>제목</div>
-		<!-- <div>${boardVO.boardTitle}</div> -->
+		<div>{{result.boardTitle}}</div>
+
 		<div>조회수</div>
-		<!-- <div>${boardVO.boardView}</div> -->
+		<div>{{result.view}}</div>
+
 	</div>
 	<div>
 		<div>내용</div>
-		<!-- <div>${boardVO.boardContent}</div> -->
+		<div>{{result.boardContent}}</div>
+
 		<div>첨부파일 이미지 + 첨부파일</div>
 	</div>
 
@@ -44,8 +49,8 @@
 		</form>
 	</div>
 	<div>
-		<button type="button" onclick="location.href='/list'">목록</button>
-		<button onclick="location.href='/update?boardNo=${boardVO.boardNo}'">수정</button>
+		<button type="button" onclick="history.back">목록</button>
+		<button v-on:click="updatePost(this.$route.params.boardNo)">수정</button>
 		<button type="button" id="modal_open_btn" onclick="modalOpen()">삭제</button>
 	</div>
 
@@ -68,31 +73,85 @@
 	</div>
 </div>
 </template>
+<style scoped>
+		#modal {
+			display: none;
+			position:relative;
+			width:100%;
+			height:100%;
+			z-index:1;
+		}
+
+		#modal h2 {
+			margin:0;
+		}
+
+		#modal button {
+			display:inline-block;
+			width:100px;
+			margin-left:calc(100% - 100px - 10px);
+		}
+
+		#modal .modal_content {
+			width:300px;
+			margin:100px auto;
+			padding:20px 10px;
+			background:#fff;
+			border:2px solid #666;
+		}
+
+		#modal .modal_layer {
+			position:fixed;
+			top:0;
+			left:0;
+			width:100%;
+			height:100%;
+			background:rgba(0, 0, 0, 0.5);
+			z-index:-1;
+		}
+	</style>
 <script>
 import axios from 'axios'
+import {ref} from 'vue'
 
 export default {
-  name: 'ReadView',
+  name: 'BoardReadView',
   data(){
     return {
-      result: []
+      result: ref([])
     }
   },
-  created(){
-    this.getData()
+  mounted(){
+    this.getBoardPost()
   },
   methods: {
-    getData(){
-      axios
-      .get('http://localhost:8000/read?boardNo=')
-      .then(response => {
-        console.log(response)
-        this.result = response.data
-      })
-      .catch((error)=>{
-        console.log(error)
-      })
-    }
+
+    async getBoardPost(){
+
+		try{
+			console.log(this.$route.params.boardNo)
+			const response = await axios.get('http://localhost:8000/board/read',{
+				params: {
+					boardNo : this.$route.params.boardNo
+				}
+				
+				})
+			console.log(response)
+			this.result = response.data
+		}catch(error){
+			console.log(error)
+		}
+    },
+
+	updatePost (boardNo){
+		this.$router.push({
+			name: "BoardUpdateView",
+			params:{
+				boardNo : boardNo
+			}
+		})
+	}
+
   }
 }
 </script>

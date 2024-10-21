@@ -13,7 +13,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "board" */ '../views/BoardListView.vue')
   },
   {
-    path: '/board/read',
+    path: '/board/read/:boardNo',
     name: 'BoardReadView',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -26,7 +26,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "board" */ '../views/BoardWriteView.vue')
   },
   {
-    path: '/board/update',
+    path: '/board/update/:boardNo',
     name: 'BoardUpdateView',
     component: () => import(/* webpackChunkName: "board" */ '../views/BoardUpdateView.vue')
   }
