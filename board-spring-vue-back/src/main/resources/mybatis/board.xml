@@ -61,6 +61,7 @@
                b.board_update_date,
                bc.board_category_name
         FROM board b JOIN board_category bc ON b.board_category_no = bc.board_category_no
+        <!--
         <where>
             <include refid="searchCondition"></include>
         </where>
@@ -75,6 +76,7 @@
                 ORDER BY b.board_No DESC LIMIT  #{pageIndex} , #{viewPost}
             </otherwise>
         </choose>
+        -->
     </select>
 
 

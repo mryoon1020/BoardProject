@@ -14,6 +14,7 @@ import static com.study.boardspringvueback.util.MyUtility.checkNullChangeToEmpty
 
 
 @RestController
+@RequestMapping("/api")
 public class BoardController {
     @Autowired
     private BoardService service;
@@ -25,26 +26,20 @@ public class BoardController {
         return "home";
     }
     /**
-     * list page 호출 메서드
-     * currentPage : 현재페이지
-     * iCurrentPage : 연산을 위해 int로 형변환한 currentPage
-     * pageIndex : 쿼리에서 Limit 시작될 글 index
-     * viewPost : 한페이지에 보여줄 게시글 갯수
-     * totalPost: 전체 글갯수
-     * lastPage : 마지막 페이지
-     * @param request : jsp와 통신할 도구
-     * @return main.jsp
+     * 게시판 목록 조회 메서드
+     * @param boardPageSearchVO : 검색조건 및 페이징처리를 위한 VO입니다.
+     * @return list : 게시판 목록
      */
     @GetMapping("/board/list")
-    public List list(BoardPageSearchVO boardPageSearchVO, HttpServletRequest request){
+    public List list(BoardPageSearchVO boardPageSearchVO){
         List<BoardVO> list = service.list(boardPageSearchVO);
         return list;
     }
 
     /**
-     * 게시판 카테고리조회 메서드
-     * front에서 component로 쪼갰음
-     * @return 카테고리 목록
+     * 게시판 카테고리 조회 메서드
+     * Front-end 검색창에서 사용됩니다
+     * @return categoryList : 카테고리 목록
      */
     @GetMapping("/board/category")
     public List boardCategoryList(){
