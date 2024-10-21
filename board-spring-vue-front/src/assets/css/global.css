@@ -1,0 +1,41 @@
+/* App.vue 에서만 사용 최대 화면 크기 고정용 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* css */
+
+/* 공용 */
+
+/* 버튼 정렬*/
+.button-wrapper{
+    display: flex;
+    gap: 20px;
+}
+
+/*flex 중앙 수직정렬*/
+.flex-center-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.flex-center-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.contents-wrapper{
+    gap: 40px;
+}
+
+/* HomeView.vue */
+/* BoardListView */
+.searchbar-wrapper{
+    gap: 10px;
+}
