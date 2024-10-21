@@ -11,18 +11,12 @@
     <sql id="searchCondition">
 
             <choose>
-                <when test = '@com.study
-                .boardspringvueback
-                .util
-                .MyUtility@checkNullChangeToEmptyString(searchKeyWord) != ""'>
+                <when test = 'searchKeyWord != null and searchKeyWord != ""'>
                     b.board_title  like CONCAT('%',#{searchKeyWord},'%')
                     OR b.board_writer like CONCAT('%',#{searchKeyWord},'%')
                     OR b.board_content like CONCAT('%',#{searchKeyWord},'%')
                 </when>
-                <when test='@com.study
-                .boardspringvueback
-                .util
-                .MyUtility@checkNullChangeToEmptyString(boardCategoryNo) != ""'>
+                <when test='boardCategoryNo != null and boardCategoryNo != ""'>
                     AND b.board_category_no = #{boardCategoryNo}
                 </when>
                 <when test='@com.study
@@ -52,6 +46,9 @@
             </choose>
 
     </sql>
+
+
+
 <!--게시글 목록 조회 쿼리, 검색조건과 같이 연동-->
     <select id="list" parameterType="com.study.boardspringvueback.vo.BoardPageSearchVO" resultType="com.study.boardspringvueback.vo.BoardVO">
         SELECT b.board_no,
@@ -79,6 +76,8 @@
             </otherwise>
         </choose>
     </select>
+
+
 <!--게시글 작성 쿼리-->
     <insert id="write" parameterType="com.study.boardspringvueback.vo.BoardVO">
         INSERT INTO board(board_category_name, board_title, board_writer,
@@ -86,10 +85,14 @@
                           board_write_date)
         VALUES(#{boardCategoryName},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
     </insert>
+
+
 <!--조회수 증가 쿼리-->
     <update id="viewUp" parameterType="int">
         UPDATE board SET board_view=#{boardView}+1 WHERE board_no =#{boardNo}
     </update>
+
+
 <!--게시글 읽기 쿼리-->
     <select id="read" resultType="com.study.boardspringvueback.vo.BoardVO">
         SELECT b.board_no
@@ -104,7 +107,10 @@
         FROM board b JOIN board_category bc ON b.board_category_no = bc.board_category_no
         WHERE board_no = #{boardNo}
     </select>
-<!--게시글 수정 쿼리-->
+
+
+
+    <!--게시글 수정 쿼리-->
     <update id="update" parameterType="com.study.boardspringvueback.vo.BoardVO">
         UPDATE board
         SET board_writer= #{boardWriter},
@@ -113,6 +119,8 @@
             board_update_date=NOW()
         WHERE board_no = #{boardNo}
     </update>
+
+
 <!--비밀번호 확인 쿼리-->
     <select id="checkPassword" resultType="com.study.boardspringvueback.vo.BoardVO">
         SELECT board_password

@@ -4,39 +4,25 @@ import com.study.boardspringvueback.service.BoardService;
 import com.study.boardspringvueback.vo.BoardPageSearchVO;
 import com.study.boardspringvueback.vo.BoardVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 import static com.study.boardspringvueback.util.MyUtility.checkNullChangeToEmptyString;
+
 
 @RestController
 public class BoardController {
     @Autowired
     private BoardService service;
-//    @GetMapping("/")
-//    public String home(){
-//        System.out.println("들렀음");
-//        return "준비중...";
-//    }
+    /**
+     * home 메서드
+     */
     @GetMapping("/")
-    public List home(){
-        List list = new ArrayList<>();
-        list.add("안녕");
-        list.add("이러면 되냐?");
-        list.add("됐으면 좋겠다");
-        return list;
-    }
-
-    @GetMapping("/api")
-    public String api(){
-        System.out.println("/api 들렀음");
-        return "api 로 호출한거 준비중...";
+    public String home() {
+        return "home";
     }
     /**
      * list page 호출 메서드
@@ -51,26 +37,7 @@ public class BoardController {
      */
     @GetMapping("/board/list")
     public List list(BoardPageSearchVO boardPageSearchVO, HttpServletRequest request){
-
-//        String currentPage = boardPageSearchVO.getPageIndex();
-//        int iCurrentPage = 0;
-//        int pageIndex = 0;
-//        int viewPost = 10;
-//        int totalPost = service.totalPost();
-//        int lastPage = 0;
-//
-//        if("".equals(checkNullChangeToEmptyString(currentPage))){
-//            currentPage = "1";
-//        }else {
-//            currentPage = request.getParameter("currentPage");
-//        }
-//
-//        iCurrentPage = Integer.parseInt(currentPage);
-//        pageIndex = (iCurrentPage-1)*viewPost;
-//        lastPage = (int)Math.ceil((double)totalPost/viewPost);
-
         List<BoardVO> list = service.list(boardPageSearchVO);
-
         return list;
     }
 
@@ -92,9 +59,56 @@ public class BoardController {
     @GetMapping("/board/countTotalPost")
     public int boardCountTotalPost(){
         int totalPost = service.totalPost();
-        System.out.println("contTotalPost 들어왔다");
-        System.out.println(totalPost);
         return totalPost;
     }
+
+    /**
+     * 게시글 조회 메서드
+     * @param boardNo 게시글 번호
+     * @return boardVO 게시글 내용
+     */
+    @GetMapping("/board/read")
+    public BoardVO read(int boardNo){
+        BoardVO boardVO = service.read(boardNo);
+        service.viewUp(Integer.parseInt(boardVO.getBoardView()),boardNo);
+        return boardVO;
+    }
+
+    /**
+     *
+     * @param boardVO 화면에서 사용자가 입력한 값(JSON형태로 들어옴)
+     * @return 성공, 실패
+     */
+    @PostMapping("/board/update")
+    public boolean update(@RequestBody BoardVO boardVO){
+
+        System.out.println(boardVO);
+
+        if(!checkPassword(boardVO.getBoardNo(),boardVO.getBoardPassword())){
+            return false;
+        } else {
+            service.update(boardVO);
+            return true;
+        }
+    }
+
+    /**
+     * 화면에서 받아온 사용자가 입력한 비밀번호와 저장되어있는 비밀번호 비교 메서드
+     * @param boardNo 게시글번호
+     * @param userEnteredPassword 사용자가 입력한 비밀번호
+     * @return 비밀번호 결과가 일치하면 true, 일치하지 않은면 false를 반환
+     */
+    private boolean checkPassword(int boardNo, String userEnteredPassword) {
+        BoardVO boardVO = service.checkPassword(boardNo);
+        userEnteredPassword = checkNullChangeToEmptyString(userEnteredPassword);
+
+        if (userEnteredPassword.equals(boardVO.getBoardPassword())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 
 }
