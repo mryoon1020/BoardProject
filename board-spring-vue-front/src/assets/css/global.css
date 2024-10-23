@@ -30,12 +30,20 @@
     flex-direction: row;
 }
 
-.contents-wrapper{
+.contents-wrapper {
     gap: 40px;
 }
 
 /* HomeView.vue */
 /* BoardListView */
-.searchbar-wrapper{
+.searchbar-wrapper {
     gap: 10px;
+}
+
+/* BoardPagenation.vue */
+.pagenation-box {
+    margin: 10px 0 10px 0;
+}
+.pagenation-page {
+    margin: 0 10px 0 10px;
 }

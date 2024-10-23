@@ -3,7 +3,7 @@
     <h1>ListView</h1>
     <div class="flex-center-column contents-wrapper">
       <!-- 검색창 -->
-      <BoardSearchBar @searchCondition="getBoardList" />
+      <BoardSearchBar @newTotalPage = "handleNewTotalPage" />
       <!-- 게시글 목록 -->
       <div>
         <table>
@@ -32,9 +32,11 @@
 
           </tbody>
         </table>
+
         <!-- 페이징처리부분 -->
-        <a v-on:click=getBoardList(i) v-for="i in endPage" :key="i">&nbsp;{{i}}&nbsp;</a>
-        <br>
+        
+        <BoardPagenation :totalPage = "totalPage" />
+        
         <!-- 글쓰기 버튼 -->
         <a href="/board/write" class="btn btn-primary pull-right">글쓰기</a>
       </div>
@@ -59,9 +61,12 @@
 import { onMounted, ref } from 'vue';
 import { useFunctionBoard } from '@/composables/useFunctionBoard';
 import BoardSearchBar from '@/components/BoardSearchBar.vue';
+import BoardPagenation from '@/components/BoardPagenation.vue';
 
-  const { getBoardList, boardList } = useFunctionBoard('...');
-
+  const { getBoardList, boardList, totalPage } = useFunctionBoard('...');
+  const handleNewTotalPage = (newTotalPage) => {
+    totalPage.value = newTotalPage;
+  }
   onMounted(() => {
     getBoardList();
   })
