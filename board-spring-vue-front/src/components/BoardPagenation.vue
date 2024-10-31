@@ -11,9 +11,6 @@
             <p class="pagenation-page" @click="handlemoveAction(totalPage)">{{ "......" + totalPage }}</p>
         </div>
         <button @click="handlemoveAction('next')">next</button>
-        {{ currentPage > 5 }}
-        {{ currentPage != 1 }}
-        {{ props.totalPage > 5 }}
         {{ viewPageNo }}
         {{ `totalPage ${totalPage}` }}
         {{ `currentPage ${currentPage}` }}
@@ -52,6 +49,7 @@ import { nextTick, onMounted, watch } from 'vue';
     // useFunctionBoard에 totalPage 정보 변화 감지.
     watch(() => props.viewPost, async (newViewPost) => {
         viewPost.value = newViewPost;
+        currentPage.value = 1;
         await getTotalPage();
         handleViewPageNo();
     })

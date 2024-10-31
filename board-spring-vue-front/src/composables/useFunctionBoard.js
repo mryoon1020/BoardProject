@@ -110,10 +110,25 @@ export function useFunctionBoard () {
         
         startPage.value = 1;
         
-        if(currentPage.value % 5 !== 0 || currentPage.value == totalPage.value) {
-            return;
-        } else {
-            startPage.value = currentPage.value-1;
+        // if(currentPage.value % 5 !== 0 || currentPage.value == totalPage.value) {
+        //     return;
+        // } else {
+        //     startPage.value = currentPage.value-1;
+        // }
+
+        // if(currentPage.value % 5 == 0){
+        //     startPage.value = currentPage.value - 1;
+        // } else if (currentPage.value == totalPage.value) {
+        //     for(let i = currentPage.value; i > 0; i--){
+                
+        //         if(i % 5 == 0) {
+        //             startPage.value = i - 1;
+        //             break;
+        //         }
+        //     }
+        // }
+        if(currentPage.value != 1){
+            startPage.value = Math.floor(currentPage.value/5) * 5 - 1;
         }
 
     }
@@ -150,16 +165,18 @@ export function useFunctionBoard () {
      * */
     const setViewPageNo = (pages) => {
         // 기존의 배열에 원소가 있을 수 있으므로 배열을 초기화 합니다.
+        console.log("setViewPageNo호출")
         viewPageNo.value.length = 0;
-        
+        console.log("totalPage",totalPage.value)
+        console.log("startPage",startPage.value)
         for(let i = 0; i < pages; i++) {
-
+            console.log("setViewPageNo for 실행")
             const pageNo = startPage.value + i;
             
             viewPageNo.value.push(pageNo)
 
             if(viewPageNo.value[i] > totalPage.value){
-
+                console.log("setViewPageNo for break")
                 viewPageNo.value.splice(i)
                 break;
             }
@@ -196,7 +213,7 @@ export function useFunctionBoard () {
                 return false;
             }
         
-        } else if(currentPage.value == 1) {
+        } else if(currentPage.value == 1 || currentPage.value == totalPage.value) {
             return true;
         } else {
             return false;
@@ -217,6 +234,7 @@ export function useFunctionBoard () {
         getStartPage();
         getEndPage();
         if(isChangeViewPageNo()) {
+            console.log("handleViewPageNo if문 내부")
             // 페이지 번호가 1~5 일경우 5개만 표시
             // 페이지 번호가 4또는 9로 시작할 때 7개 씩 표시
             const pages = startPage.value == 1 ? 5 : 7;
