@@ -33,7 +33,7 @@
 <script setup>
 import { useFunctionBoard } from '@/composables/useFunctionBoard';
 import { onMounted, ref } from 'vue';
-    const emits = defineEmits(['newTotalPage'])
+    const emits = defineEmits(['newViewPost', 'newBoardList'])
     const { 
             categoryList,
             getCategoryList,
@@ -43,14 +43,16 @@ import { onMounted, ref } from 'vue';
             searchKeyWord,
             getBoardList,
             viewPost,
-            totalPage,
-            getTotalPage
+            updateSearchQuery,
+            boardList
         } = useFunctionBoard('...');
 
     const search = async () => {
-        await getTotalPage()
-        await getBoardList()
-        emits('newTotalPage', totalPage.value)
+        if(await getBoardList()) {
+            updateSearchQuery();
+        }
+        emits('newViewPost', viewPost.value);
+        emits('newBoardList', boardList.value);
     }
 
     onMounted(() => {

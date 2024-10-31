@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 export function useFunctionBoard () {
@@ -32,12 +32,16 @@ export function useFunctionBoard () {
         }
     }
 
-    const updateQuery = () => {
+    const updateSearchQuery = () => {
+        router.push({ query: 
+            searchCondition.value
+        })
+    }
+
+    const updatePageQuery = () => {
         router.push({ query: {
             ...route.query,
-            ...searchCondition.value,
             currentPage : currentPage.value,
-            viewPost : viewPost.value
         }})
     }
 
@@ -49,13 +53,15 @@ export function useFunctionBoard () {
 
     const searchCondition = computed(() => {
         const condition = {};
-        viewPost.value !== 10? condition.viewPost = viewPost.value : 10;
+
+        condition.viewPost = viewPost.value;
         startDate.value ? condition.startDate = startDate.value : null;
         endDate.value ? condition.endDate = endDate.value : null;
         selectedCategoryNo.value !== 0 ? condition.boardCategoryNo = selectedCategoryNo.value : null;
         searchKeyWord.value ? condition.searchKeyWord = searchKeyWord.value : null;
-        // currentPage.value !== 1 ? condition.currentPage = currentPage.value :null;
-
+        currentPage.value !== 1 ? condition.currentPage = currentPage.value :null;
+        startPage.value !== 1 ? condition.startPage = startPage.value : null;
+        endPage.value !== 1 ? condition.endPage = endPage.value : null;
         return condition;
     });
 
@@ -74,9 +80,12 @@ export function useFunctionBoard () {
     // BoardListView.vue
     const boardList = ref(null);
     const getBoardList = async () => {
-        updateQuery();
-        getTotalPage();
-        boardList.value = await getData(apiEndPoint.list, searchCondition.value);
+        try {
+            boardList.value = await getData(apiEndPoint.list, searchCondition.value);
+            return true;
+        } catch {
+            return false;
+        }
     }
 
     // BoardSearchbar.vue
@@ -87,25 +96,163 @@ export function useFunctionBoard () {
 
     // BoardPagenation.vue
     const totalPage = ref(0);
-    const startPage = ref(0);
+    const startPage = ref(1);
     const endPage = ref(0);
+    const viewPageNo = ref([])
     const currentPage = ref(1);
     const headed = ref(0);
     const getTotalPage = async () => {
         const totalPost = await getData(apiEndPoint.totalPost);
         totalPage.value = Math.ceil(totalPost / viewPost.value);
     }
-    const getStartPage = (pageNo) => {
-        if(pageNo % 5 === 1) {
-            startPage.value = pageNo-1;
-        } 
+
+    const getStartPage = () => {
+        
+        startPage.value = 1;
+        
+        if(currentPage.value % 5 !== 0 || currentPage.value == totalPage.value) {
+            return;
+        } else {
+            startPage.value = currentPage.value-1;
+        }
+
     }
 
     const getEndPage = () => {
-        endPage.value = startPage + 5;
+        
+        endPage.value = 0;
+        
+        if(endPage.value > totalPage.value || startPage.value + 5 > totalPage.value) {
+            endPage.value = totalPage.value;
+        } else {
+            endPage.value = startPage.value + 5;
+        }
+    }
+    /**
+     * 컨셉
+     * 1 2 3 4 5
+     * 4 5 6 7 8 9 10
+     * 9 10 11 12 13 14 15
+     * 필요 항목: 
+     * 1. 페이지 배열을 생성 해줘야함
+     * 2. 현재 페이지가 1 ~ 4 or 5 ~9 or 10 ~14 확인하는 로직 필요
+     * 3. 현재 페이지 변경시 페이지 배열 필요.
+     * 
+     * 결론.
+     * 
+     * 함수는 총 3개 필요(배열생성 함수, 현재 페이지 확인 함수, 현재 페이지 확인함수)
+     */
+
+    /**
+     * 페이지 배열생성 함수
+     * viewPages에 원소를 추가합니다.
+     * @param pages 페이지 갯수
+     * */
+    const setViewPageNo = (pages) => {
+        // 기존의 배열에 원소가 있을 수 있으므로 배열을 초기화 합니다.
+        viewPageNo.value.length = 0;
+        
+        for(let i = 0; i < pages; i++) {
+
+            const pageNo = startPage.value + i;
+            
+            viewPageNo.value.push(pageNo)
+
+            if(viewPageNo.value[i] > totalPage.value){
+
+                viewPageNo.value.splice(i)
+                break;
+            }
+        }
     }
 
-    const moveAction = (action) => {
+    /**
+     * 현재 페이지번호 확인 함수
+     * 현재 페이지 번호에 대한 정보는 route.query.currentPage에서 확인합니다.
+     * 결과는 currentPage 에 다시 저장합니다.
+     */
+    const getCurrentPageNo = () => {
+        currentPage.value = route.query.currentPage || 1;
+    }
+    
+    /**
+     * 현재 페이지번호를 바탕으로 viewPageNo의 변경여부를 판단합니다.
+     * @return boolean 변경: true, 변경안함: false
+     */
+    const isChangeViewPageNo = () => {
+        // 현재 페이지가 5의 배수일경우 페이지 배열(viewPageNo)를 변경합니다.
+        if(currentPage.value%5 == 0) {
+        
+            return true;
+        
+        } else if(currentPage.value%5 == 4) {
+
+            // 현재 페이지 번호가 4 또는 9 로 끝날때,
+            // 페이지 배열에서 첫번째 순서일경우 배열을 변경합니다.
+            // 그밖의 경우에는 배열을 변경하지 않습니다.
+            if(currentPage.value == viewPageNo.value[0]) {
+                return true;
+            } else {
+                return false;
+            }
+        
+        } else if(currentPage.value == 1) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * 표시할 페이지 번호 배열에 대하여 컨트롤합니다.
+     * @todo 있음, pages가 원인모를 오류로  제대로 반영안됨
+     * getTotalPage는 어디서 처리해야할까?????
+     * 문제상황, handleViewPageNo()안에서 실행 => viewPost 변화를 다시 초기화값으로 덮어씀
+     * 문제상황2, pagenation.vue onMounted() 에서 실행, props로 제대로 전달 받았지만, handleViewPageNo()안에서
+     * 반영할 수 없음
+     */
+    const handleViewPageNo = () => {
+        getCurrentPageNo();
+        getStartPage();
+        getEndPage();
+        if(isChangeViewPageNo()) {
+            // 페이지 번호가 1~5 일경우 5개만 표시
+            // 페이지 번호가 4또는 9로 시작할 때 7개 씩 표시
+            const pages = startPage.value == 1 ? 5 : 7;
+            setViewPageNo(pages);
+        }
+    }
+
+    //old code
+    // const setViewPages = (totalPages) => {
+
+    //     getStartPage();
+    //     console.log("currentPage", currentPage.value)
+    //     if(totalPages <= 5){
+
+    //         for(let i = 0; i < totalPages; i++) {
+    //             viewPages.value[i] = i + 1
+    //         }
+
+    //         return;
+
+    //     } else {
+    //         const arrayLength = currentPage.value != 1 ? 7 : 5
+            
+    //         for(let i = 0; i < arrayLength; i++){
+                
+    //             viewPages.value[i] = startPage.value + i + 1;
+
+    //             if(viewPages.value[i] > totalPage.value) {
+    //                 viewPages.value.splice(i);
+    //                 break;
+    //             }
+    //         }
+    //     }
+    // }
+
+    const moveAction = async (action) => {
         switch(action){
             case 'prev':
                 headed.value = currentPage.value <= 1?  alert('첫 번째 페이지입니다.') : currentPage.value-1;
@@ -117,9 +264,43 @@ export function useFunctionBoard () {
                 headed.value = Number(action);
                 break;
         }
+
         currentPage.value = headed.value;
-        getBoardList()
+
+        if(await getBoardList()) {
+            updatePageQuery();
+        }
     }
+
+    onMounted(() => {
+        if(route.query.viewPost) {
+            viewPost.value = route.query.viewPost;
+        }
+
+        if(route.query.startDate) {
+            startDate.value = route.query.startDate;
+        }
+
+        if(route.query.endDate) {
+            endDate.value = route.query.endDate;
+        }
+
+        if(route.query.searchKeyWord) {
+            searchKeyWord.value = route.query.searchKeyWord;
+        }
+
+        if(route.query.currentPage) {
+            currentPage.value = route.query.currentPage;
+        }
+
+        if(route.query.startPage) {
+            startPage.value = route.query.startPage;
+        }
+
+        if(route.query.endPage) {
+            endPage.value = route.query.endPage;
+        }
+    })
 
     return {
         count,
@@ -140,7 +321,14 @@ export function useFunctionBoard () {
         totalPage,
         currentPage,
         moveAction,
-        viewPost
+        viewPost,
+        updateSearchQuery,
+        getStartPage,
+        getEndPage,
+        startPage,
+        endPage,
+        handleViewPageNo,
+        viewPageNo
 
     }
 }
