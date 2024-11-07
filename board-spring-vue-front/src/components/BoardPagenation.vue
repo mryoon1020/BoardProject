@@ -11,9 +11,10 @@
             <p class="pagenation-page" @click="handlemoveAction(totalPage)">{{ "......" + totalPage }}</p>
         </div>
         <button @click="handlemoveAction('next')">next</button>
-        {{ viewPageNo }}
+        <!-- {{ viewPageNo }}
         {{ `totalPage ${totalPage}` }}
-        {{ `currentPage ${currentPage}` }}
+        {{ `currentPage ${currentPage}` }} -->
+        <!-- {{ boardList }} -->
     </div>
     <!-- <a href="getTotalPost(pageNo)" v-for="i in endPage" :key="i">&nbsp;{{i}}&nbsp;</a> -->
 </template>
@@ -25,37 +26,42 @@ import { nextTick, onMounted, watch } from 'vue';
         viewPost :  Number
     })
 
-    const emit = defineEmits(['prevPage', 'nextPage'])
+    const emits = defineEmits(['prevPage', 'nextPage', 'newPageBoardList'])
     const { moveAction, 
             totalPage,
-            getStartPage,
-            getEndPage,
-            startPage,
-            endPage,
             currentPage,
             handleViewPageNo,
             viewPageNo,
             viewPost,
-            getTotalPage
+            updatePageQuery,
+            startPost,
+            boardList,
+            getBoardList,
         } = useFunctionBoard('...');
 
     const handlemoveAction = async (action) => {
         await moveAction(action)
-        await getTotalPage();
-        handleViewPageNo();
+        await handleViewPageNo();
+        await getBoardList()
+        emits('newPageBoardList', boardList.value);
 
     }
 
-    // useFunctionBoard에 totalPage 정보 변화 감지.
+    // useFunctionBoard에 viewPost 정보 변화 감지.
     watch(() => props.viewPost, async (newViewPost) => {
-        viewPost.value = newViewPost;
-        currentPage.value = 1;
-        await getTotalPage();
-        handleViewPageNo();
+
+        if(Number(viewPost.value) !== Number(newViewPost)) {
+            viewPost.value = Number(newViewPost);
+            currentPage.value = 1;
+
+            await updatePageQuery();
+            await handleViewPageNo();
+            await getBoardList()
+            emits('newPageBoardList', boardList.value);
+        }
     })
 
-    onMounted(async () => {
-        await getTotalPage();
+    onMounted(() => {
         handleViewPageNo();
     })
 

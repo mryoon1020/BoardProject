@@ -9,6 +9,7 @@
         <table>
           <thead>
           <tr>
+            <th>글번호</th>
             <th>카테고리</th>
             <th>제목</th>
             <th>작성자</th>
@@ -22,6 +23,7 @@
                   v-for="(data, index) in boardList"
                   :key="index"
                 >
+                  <td>{{data.boardNo}}</td>
                   <td>{{data.boardCategoryName}}</td>
                   <td><a v-on:click="readPost(`${data.boardNo}`)">{{data.boardTitle}}</a></td>
                   <td>{{data.boardWriter}}</td>
@@ -35,8 +37,8 @@
 
         <!-- 페이징처리부분 -->
         
-        <BoardPagenation :viewPost = "Number(viewPost)" />
-        
+        <BoardPagenation :viewPost = "Number(viewPost)" @newPageBoardList = "handleNewPageBoardList" />
+
         <!-- 글쓰기 버튼 -->
         <a href="/board/write" class="btn btn-primary pull-right">글쓰기</a>
       </div>
@@ -73,6 +75,10 @@ import BoardPagenation from '@/components/BoardPagenation.vue';
   }
 
   const handleNewBoardList = (newBoardList) => {
+    boardList.value = newBoardList;
+  }
+
+  const handleNewPageBoardList = (newBoardList) => {
     boardList.value = newBoardList;
   }
 

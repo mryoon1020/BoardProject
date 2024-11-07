@@ -38,10 +38,12 @@ export function useFunctionBoard () {
         })
     }
 
-    const updatePageQuery = () => {
-        router.push({ query: {
+    const updatePageQuery = async() => {
+        await router.push({ query: {
             ...route.query,
             currentPage : currentPage.value,
+            viewPost: viewPost.value,
+            startPost: startPost.value,
         }})
     }
 
@@ -59,9 +61,10 @@ export function useFunctionBoard () {
         endDate.value ? condition.endDate = endDate.value : null;
         selectedCategoryNo.value !== 0 ? condition.boardCategoryNo = selectedCategoryNo.value : null;
         searchKeyWord.value ? condition.searchKeyWord = searchKeyWord.value : null;
-        currentPage.value !== 1 ? condition.currentPage = currentPage.value :null;
-        startPage.value !== 1 ? condition.startPage = startPage.value : null;
-        endPage.value !== 1 ? condition.endPage = endPage.value : null;
+        // currentPage.value !== 1 ? condition.currentPage = currentPage.value :null;
+        // startPage.value !== 1 ? condition.startPage = startPage.value : null;
+        // endPage.value !== 1 ? condition.endPage = endPage.value : null;
+        currentPage.value !== 1 ? condition.startPost = (currentPage.value - 1) * viewPost.value : null;
         return condition;
     });
 
@@ -100,15 +103,16 @@ export function useFunctionBoard () {
     const endPage = ref(0);
     const viewPageNo = ref([])
     const currentPage = ref(1);
+    const startPost = ref(0);
     const headed = ref(0);
     const getTotalPage = async () => {
         const totalPost = await getData(apiEndPoint.totalPost);
-        totalPage.value = Math.ceil(totalPost / viewPost.value);
+        totalPage.value = Math.max(Math.ceil(totalPost / viewPost.value));
     }
 
     const getStartPage = () => {
         
-        startPage.value = 1;
+        // startPage.value = 1;
         
         // if(currentPage.value % 5 !== 0 || currentPage.value == totalPage.value) {
         //     return;
@@ -120,24 +124,28 @@ export function useFunctionBoard () {
         //     startPage.value = currentPage.value - 1;
         // } else if (currentPage.value == totalPage.value) {
         //     for(let i = currentPage.value; i > 0; i--){
-                
+
         //         if(i % 5 == 0) {
         //             startPage.value = i - 1;
         //             break;
         //         }
         //     }
         // }
-        if(currentPage.value != 1){
-            startPage.value = Math.floor(currentPage.value/5) * 5 - 1;
-        }
 
+        // 현재 페이지 보다 작은 5의 배수를 찾아 startPage를 계산합니다.
+        // if(currentPage.value%5 === 0){
+        //     startPage.value = currentPage.value - 1;
+        // } else {
+            startPage.value = Math.max(1, Math.floor(currentPage.value/5) * 5 - 1);
+        // }
     }
 
     const getEndPage = () => {
         
-        endPage.value = 0;
+        // endPage.value = 0;
         
-        if(endPage.value > totalPage.value || startPage.value + 5 > totalPage.value) {
+        // if(endPage.value > totalPage.value || startPage.value + 5 > totalPage.value) {
+        if(startPage.value + 5 > totalPage.value) {
             endPage.value = totalPage.value;
         } else {
             endPage.value = startPage.value + 5;
@@ -165,22 +173,26 @@ export function useFunctionBoard () {
      * */
     const setViewPageNo = (pages) => {
         // 기존의 배열에 원소가 있을 수 있으므로 배열을 초기화 합니다.
-        console.log("setViewPageNo호출")
-        viewPageNo.value.length = 0;
-        console.log("totalPage",totalPage.value)
-        console.log("startPage",startPage.value)
+
+        // viewPageNo.value.length = 0; 안전하지 않음
+        const newViewPageNo = [];
         for(let i = 0; i < pages; i++) {
-            console.log("setViewPageNo for 실행")
+            
+
             const pageNo = startPage.value + i;
             
-            viewPageNo.value.push(pageNo)
+            // newPageNo.value.push(pageNo)
 
-            if(viewPageNo.value[i] > totalPage.value){
-                console.log("setViewPageNo for break")
-                viewPageNo.value.splice(i)
+            // if(viewPageNo.value[i] > totalPage.value){
+            if(pageNo > totalPage.value){
+                // viewPageNo.value.splice(i)
                 break;
             }
+
+            newViewPageNo.push(pageNo)
         }
+
+        viewPageNo.value = newViewPageNo;
     }
 
     /**
@@ -197,27 +209,46 @@ export function useFunctionBoard () {
      * @return boolean 변경: true, 변경안함: false
      */
     const isChangeViewPageNo = () => {
-        // 현재 페이지가 5의 배수일경우 페이지 배열(viewPageNo)를 변경합니다.
+
+        // 페이지 배열이 비어있는 경우
+        if(viewPageNo.value.length == 0) {
+            return true;
+        }
+
+        // 잘못된 페이지 번호를 처리
+        if(currentPage.value > totalPage.value){
+
+            return true;
+        }
+
+        // 현재 페이지가 5의 배수일경우
         if(currentPage.value%5 == 0) {
-        
+
             return true;
         
-        } else if(currentPage.value%5 == 4) {
-
+        }
+        
+        // 현재 페이지가 4 또는 9로 끝나는 경우
+        if(currentPage.value%5 == 4) {
             // 현재 페이지 번호가 4 또는 9 로 끝날때,
             // 페이지 배열에서 첫번째 순서일경우 배열을 변경합니다.
             // 그밖의 경우에는 배열을 변경하지 않습니다.
             if(currentPage.value == viewPageNo.value[0]) {
+
                 return true;
-            } else {
-                return false;
             }
-        
-        } else if(currentPage.value == 1 || currentPage.value == totalPage.value) {
-            return true;
-        } else {
+
             return false;
+
         }
+        
+        // 현재 페이지가 첫 페이지거나 마지막 페이지인 경우
+        if(currentPage.value == 1 || currentPage.value == totalPage.value) {
+
+            return true;
+        }
+
+        return false;
 
     }
 
@@ -229,12 +260,14 @@ export function useFunctionBoard () {
      * 문제상황2, pagenation.vue onMounted() 에서 실행, props로 제대로 전달 받았지만, handleViewPageNo()안에서
      * 반영할 수 없음
      */
-    const handleViewPageNo = () => {
+    const handleViewPageNo = async () => {
         getCurrentPageNo();
-        getStartPage();
-        getEndPage();
+
         if(isChangeViewPageNo()) {
-            console.log("handleViewPageNo if문 내부")
+            await getTotalPage();
+            getStartPage();
+            getEndPage();
+
             // 페이지 번호가 1~5 일경우 5개만 표시
             // 페이지 번호가 4또는 9로 시작할 때 7개 씩 표시
             const pages = startPage.value == 1 ? 5 : 7;
@@ -270,6 +303,12 @@ export function useFunctionBoard () {
     //     }
     // }
 
+
+    /**
+     * 페이지 이동을 처리합니다.
+     * prev, next, 각 페이지버튼 클릭시 호출됩니다.
+     * @param : prev, next, 페이지번호
+    */
     const moveAction = async (action) => {
         switch(action){
             case 'prev':
@@ -285,9 +324,7 @@ export function useFunctionBoard () {
 
         currentPage.value = headed.value;
 
-        if(await getBoardList()) {
-            updatePageQuery();
-        }
+        await updatePageQuery();
     }
 
     onMounted(() => {
@@ -319,7 +356,7 @@ export function useFunctionBoard () {
             endPage.value = route.query.endPage;
         }
     })
-
+    
     return {
         count,
         test,
@@ -346,7 +383,10 @@ export function useFunctionBoard () {
         startPage,
         endPage,
         handleViewPageNo,
-        viewPageNo
+        viewPageNo,
+        updatePageQuery,
+        startPost,
+        
 
     }
 }
