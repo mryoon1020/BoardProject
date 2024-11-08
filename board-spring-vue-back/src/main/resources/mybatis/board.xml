@@ -48,7 +48,6 @@
     </sql>
 
 
-
 <!--게시글 목록 조회 쿼리, 검색조건과 같이 연동-->
     <select id="list" parameterType="com.study.boardspringvueback.vo.BoardPageSearchVO" resultType="com.study.boardspringvueback.vo.BoardVO">
         SELECT b.board_no,
@@ -61,7 +60,7 @@
                b.board_update_date,
                bc.board_category_name
         FROM board b JOIN board_category bc ON b.board_category_no = bc.board_category_no
-        <!--
+        ORDER BY b.board_No DESC LIMIT  #{startPost} , #{viewPost}
         <where>
             <include refid="searchCondition"></include>
         </where>
@@ -69,14 +68,14 @@
             <when test='@com.study
                 .boardspringvueback
                 .util
-                .MyUtility@checkNullChangeToEmptyString(pageIndex) == ""'>
+                .MyUtility@checkNullChangeToEmptyString(startPost) == ""'>
                 ORDER BY b.board_No DESC LIMIT  1 , #{viewPost}
             </when>
             <otherwise>
-                ORDER BY b.board_No DESC LIMIT  #{pageIndex} , #{viewPost}
+                ORDER BY b.board_No DESC LIMIT  #{startPost} , #{viewPost}
             </otherwise>
         </choose>
-        -->
+
     </select>
 
 

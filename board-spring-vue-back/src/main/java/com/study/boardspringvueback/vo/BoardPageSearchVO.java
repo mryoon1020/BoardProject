@@ -17,7 +17,7 @@ public class BoardPageSearchVO {
     private String endDate;
     private String boardCategoryNo;
     private String searchKeyWord;
-    private int pageIndex;
+    private int startPost;
     private int viewPost;
 
 }

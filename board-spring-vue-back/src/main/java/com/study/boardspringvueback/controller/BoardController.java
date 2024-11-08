@@ -32,6 +32,7 @@ public class BoardController {
      */
     @GetMapping("/board/list")
     public List list(BoardPageSearchVO boardPageSearchVO){
+        System.out.println((boardPageSearchVO.getViewPost()));
         List<BoardVO> list = service.list(boardPageSearchVO);
         return list;
     }
