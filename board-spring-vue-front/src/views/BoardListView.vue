@@ -25,7 +25,7 @@
                 >
                   <td>{{data.boardNo}}</td>
                   <td>{{data.boardCategoryName}}</td>
-                  <td><a v-on:click="readPost(`${data.boardNo}`)">{{data.boardTitle}}</a></td>
+                  <td><router-link :to="{ name: 'BoardReadView', params: { boardNo: data.boardNo } }">{{data.boardTitle}}</router-link></td>
                   <td>{{data.boardWriter}}</td>
                   <td>{{data.boardView}}</td>
                   <td>{{data.boardWriteDate}}</td>
@@ -86,4 +86,4 @@ import BoardPagenation from '@/components/BoardPagenation.vue';
     getBoardList()
   })
 
-</script>
+</script> 

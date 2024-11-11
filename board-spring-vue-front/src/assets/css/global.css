@@ -31,7 +31,23 @@
 }
 
 .contents-wrapper {
-    gap: 40px;
+    gap: 30px;
+}
+
+.contents-gap-fifteen{
+    gap: 15px;
+}
+
+.content-flex-start {
+    align-items: flex-start;
+}
+
+.container-flex-between {
+    justify-content: space-between;
+}
+
+.bold {
+    font-weight: 800;
 }
 
 /* HomeView.vue */
@@ -46,4 +62,15 @@
 }
 .pagenation-page {
     margin: 0 10px 0 10px;
+}
+
+/* BoardRead.vue */
+.board-contents {
+    min-height: 100px;
+}
+
+/* BoardWrite.vue */
+.board-textarea {
+    min-height: 100px;
+    width: 700px;
 }

@@ -11,6 +11,8 @@ export function useFunctionBoard () {
         'category':'/board/category',
         'list':'/board/list',
         'totalPost':'/board/countTotalPost',
+        'read': () => `/board/read/${boardNo.value}`,
+        'write': '/board/write'
     };
 
     // 공통 사용
@@ -30,6 +32,17 @@ export function useFunctionBoard () {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    const postData = async (endPoint, inputData) => {
+        try {
+            const res = await axios.post(endPoint, inputData);
+            return res.data;
+        } catch (error) {
+            console.log(error)
+            return false;
+        }
+        
     }
 
     const updateSearchQuery = () => {
@@ -226,7 +239,7 @@ export function useFunctionBoard () {
 
             return true;
         
-        }
+        } 
         
         // 현재 페이지가 4 또는 9로 끝나는 경우
         if(currentPage.value%5 == 4) {
@@ -327,6 +340,59 @@ export function useFunctionBoard () {
         await updatePageQuery();
     }
 
+    // BoardRead
+    const post = ref({});
+    const boardNo = ref(0);
+    const getPost = async () => {
+        boardNo.value = route.params.boardNo;
+        post.value = await getData(apiEndPoint.read());
+    }
+
+    // BoardWrite
+    const boardCategoryNo = ref(0);
+    const boardWriter = ref('');
+    const boardPassword = ref('');
+    const boardPasswordCheck = ref('');
+    const boardTitle = ref('');
+    const boardContents = ref('');
+
+    // 서버로 넘어갈 데이터 집합입니다.
+    const inputData = computed(() => {
+
+        return {
+            'boardCategoryNo': boardCategoryNo.value,
+            'boardWriter': boardWriter.value,
+            'boardPassword': boardPassword.value,
+            'boardTitle' : boardTitle.value,
+            'boardContent' : boardContents.value
+        }
+    })
+
+    /**
+     * 게시글 작성함수 입니다.
+     * 비밀번호 일치 여부를 확인한 후 api를 호출합니다.
+     * 서버쪽에서 추가로 유효성 검사를 시행하며, 결과에 따라 메시지를 반환합니다.
+     */
+    const boardWrite = async () => {
+        console.log(inputData.value)
+        if(!boardPassword.value){
+            alert("비밀번호를 입력해주세요");
+            return;
+
+        } else if(boardPassword.value != boardPasswordCheck.value){
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        const result = await postData(apiEndPoint.write, inputData.value);
+
+        if(!result){
+            return alert("내용을 확인해주세요.")
+        }
+
+        return alert("글 등록에 성공하였습니다.")
+    }
+
     onMounted(() => {
         if(route.query.viewPost) {
             viewPost.value = route.query.viewPost;
@@ -386,7 +452,15 @@ export function useFunctionBoard () {
         viewPageNo,
         updatePageQuery,
         startPost,
-        
+        getPost,
+        post,
+        boardWrite,
+        boardCategoryNo,
+        boardWriter,
+        boardPassword,
+        boardPasswordCheck,
+        boardTitle,
+        boardContents,
 
     }
 }
