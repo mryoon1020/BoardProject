@@ -63,8 +63,8 @@ public class BoardController {
      * @param boardNo 게시글 번호
      * @return boardVO 게시글 내용
      */
-    @GetMapping("/board/read")
-    public BoardVO read(int boardNo){
+    @GetMapping("/board/read/{boardNo}")
+    public BoardVO read(@PathVariable int boardNo){
         BoardVO boardVO = service.read(boardNo);
         service.viewUp(Integer.parseInt(boardVO.getBoardView()),boardNo);
         return boardVO;
@@ -103,6 +103,18 @@ public class BoardController {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Front-end 에서 받아온 데이터를 service 쪽으로 넘겨줍니다.
+     * @param boardVO Front-end 에서 입력한 데이터
+     */
+    @PostMapping("/board/write")
+    public boolean write(@RequestBody BoardVO boardVO) {
+
+        boolean result = service.write(boardVO);
+
+        return result;
     }
 
 

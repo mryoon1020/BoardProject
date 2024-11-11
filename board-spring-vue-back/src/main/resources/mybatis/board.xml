@@ -9,41 +9,54 @@
 
 <!--검색조건 쿼리-->
     <sql id="searchCondition">
+            <if test="searchKeyWord != '' ">
+                b.board_title  like CONCAT('%',#{searchKeyWord},'%')
+                OR b.board_writer like CONCAT('%',#{searchKeyWord},'%')
+                OR b.board_content like CONCAT('%',#{searchKeyWord},'%')
+            </if>
+            <if test="boardCategoryNo != '' ">
+                AND b.board_category_no = #{boardCategoryNo}
+            </if>
+            <if test="startDate != '' ">
+                AND b.board_write_date >= #{startDate}
+            </if>
+            <if test="endDate != '' ">
+                AND b.board_write_date <![CDATA[<=]]> #{endDate}
+            </if>
+<!--            <choose>-->
+<!--             <when test = 'searchKeyWord != null and searchKeyWord != ""'>-->
+<!--                b.board_title  like CONCAT('%',#{searchKeyWord},'%')-->
+<!--                    OR b.board_writer like CONCAT('%',#{searchKeyWord},'%')-->
+<!--                    OR b.board_content like CONCAT('%',#{searchKeyWord},'%')-->
+<!--                </when>&ndash;&gt;-->
+<!--                <when test='boardCategoryNo != null and boardCategoryNo != ""'>-->
+<!--                    AND b.board_category_no = #{boardCategoryNo}-->
+<!--                </when>-->
+<!--                <when test='@com.study-->
+<!--                .boardspringvueback-->
+<!--                .util-->
+<!--                .MyUtility@checkNullChangeToEmptyString(startDate) != ""'>-->
+<!--                    AND b.board_write_date >= #{startDate}-->
+<!--                </when>-->
+<!--                <when test='@com.study-->
+<!--                .boardspringvueback-->
+<!--                .util-->
+<!--                .MyUtility@checkNullChangeToEmptyString(endDate) != ""'>-->
+<!--                    AND b.board_write_date <![CDATA[<=]]> #{endDate}-->
+<!--                </when>-->
+<!--                <when test='@com.study-->
+<!--                .boardspringvueback-->
+<!--                .util-->
+<!--                .MyUtility@checkNullChangeToEmptyString(startDate) != "" and @com.study-->
+<!--                .boardspringvueback-->
+<!--                .util-->
+<!--                .MyUtility@checkNullChangeToEmptyString(endDate) != ""'>-->
+<!--                    AND b.board_write_date BETWEEN #{startDate} AND #{endDate}-->
+<!--                </when>-->
+<!--                <otherwise>-->
 
-            <choose>
-                <when test = 'searchKeyWord != null and searchKeyWord != ""'>
-                    b.board_title  like CONCAT('%',#{searchKeyWord},'%')
-                    OR b.board_writer like CONCAT('%',#{searchKeyWord},'%')
-                    OR b.board_content like CONCAT('%',#{searchKeyWord},'%')
-                </when>
-                <when test='boardCategoryNo != null and boardCategoryNo != ""'>
-                    AND b.board_category_no = #{boardCategoryNo}
-                </when>
-                <when test='@com.study
-                .boardspringvueback
-                .util
-                .MyUtility@checkNullChangeToEmptyString(startDate) != ""'>
-                    AND b.board_write_date >= #{startDate}
-                </when>
-                <when test='@com.study
-                .boardspringvueback
-                .util
-                .MyUtility@checkNullChangeToEmptyString(endDate) != ""'>
-                    AND b.board_write_date <![CDATA[<=]]> #{endDate}
-                </when>
-                <when test='@com.study
-                .boardspringvueback
-                .util
-                .MyUtility@checkNullChangeToEmptyString(startDate) != "" and @com.study
-                .boardspringvueback
-                .util
-                .MyUtility@checkNullChangeToEmptyString(endDate) != ""'>
-                    AND b.board_write_date BETWEEN #{startDate} AND #{endDate}
-                </when>
-                <otherwise>
-
-                </otherwise>
-            </choose>
+<!--                </otherwise>-->
+<!--            </choose>-->
 
     </sql>
 
@@ -60,31 +73,32 @@
                b.board_update_date,
                bc.board_category_name
         FROM board b JOIN board_category bc ON b.board_category_no = bc.board_category_no
-        ORDER BY b.board_No DESC LIMIT  #{startPost} , #{viewPost}
+
         <where>
             <include refid="searchCondition"></include>
         </where>
-        <choose>
-            <when test='@com.study
-                .boardspringvueback
-                .util
-                .MyUtility@checkNullChangeToEmptyString(startPost) == ""'>
-                ORDER BY b.board_No DESC LIMIT  1 , #{viewPost}
-            </when>
-            <otherwise>
-                ORDER BY b.board_No DESC LIMIT  #{startPost} , #{viewPost}
-            </otherwise>
-        </choose>
+        ORDER BY b.board_No DESC LIMIT  #{startPost} , #{viewPost}
+<!--        <choose>-->
+<!--            <when test="@com.study-->
+<!--                .boardspringvueback-->
+<!--                .util-->
+<!--                .MyUtility@checkNullChangeToEmptyString(startPost) == '' ">-->
+<!--                ORDER BY b.board_No DESC LIMIT  1 , #{viewPost}-->
+<!--            </when>-->
+<!--            <otherwise>-->
+<!--                ORDER BY b.board_No DESC LIMIT  #{startPost} , #{viewPost}-->
+<!--            </otherwise>-->
+<!--        </choose>-->
 
     </select>
 
 
 <!--게시글 작성 쿼리-->
     <insert id="write" parameterType="com.study.boardspringvueback.vo.BoardVO">
-        INSERT INTO board(board_category_name, board_title, board_writer,
+        INSERT INTO board(board_category_no, board_title, board_writer,
                           board_password, board_content, board_view,
                           board_write_date)
-        VALUES(#{boardCategoryName},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
+        VALUES(#{boardCategoryNo},#{boardTitle},#{boardWriter},#{boardPassword},#{boardContent},0,now())
     </insert>
 
 
